@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanSync</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F0EEF8;font-family:Arial,sans-serif;min-height:100vh;padding:24px 16px 60px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:#fff;border-radius:14px;padding:22px;margin-bottom:16px;border:1px solid #E0D8F4;box-shadow:0 3px 16px rgba(184,169,240,0.1)}
+h1{font-size:clamp(1.4rem,3.5vw,2rem);color:#2C2848;font-weight:800;margin-bottom:8px;line-height:1.2}
+h1 span{color:#6B5FC7}
+.sub{color:#9890C0;font-size:0.83rem;line-height:1.6;margin-bottom:0}
+.logo{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.logo-icon{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#6B5FC7,#C4608A);display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-txt{font-weight:800;font-size:1.1rem;color:#6B5FC7}
+.steps{display:flex;background:#fff;border-radius:50px;padding:10px 16px;margin-bottom:16px;border:1px solid #E0D8F4}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:11px;left:58%;width:84%;height:2px;background:#E0D8F4}
+.step.done::after{background:#6B5FC7}
+.step-n{width:22px;height:22px;border-radius:50%;background:#E0D8F4;color:#9890C0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;z-index:1}
+.step.active .step-n{background:#B8A9F0;color:#fff;box-shadow:0 0 0 3px #F0EEF8,0 0 0 5px #B8A9F0}
+.step.done .step-n{background:#6B5FC7;color:#fff}
+.step-l{font-size:0.55rem;color:#9890C0;text-transform:uppercase;letter-spacing:.05em}
+.step.active .step-l{color:#6B5FC7;font-weight:700}
+label.lbl{display:block;font-size:0.62rem;color:#9890C0;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+input,textarea,select{width:100%;background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:8px;padding:0 12px;color:#2C2848;font-size:0.83rem;outline:none;font-family:Arial,sans-serif;height:38px;line-height:38px;appearance:none;-webkit-appearance:none}
+input[type="date"]{padding:0 10px}
+textarea{height:auto;min-height:60px;padding:9px 12px;line-height:1.5;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{margin-bottom:10px}
+.drop{border:2px dashed #E0D8F4;border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;background:#FAF8FF;transition:all .2s;margin-bottom:10px}
+.drop:hover,.drop.over{border-color:#6B5FC7;background:#EDE8FF}
+.drop-icon{font-size:2rem;margin-bottom:8px}
+.drop-title{font-weight:700;color:#2C2848;margin-bottom:4px}
+.drop-hint{font-size:0.72rem;color:#9890C0}
+.multi-preview{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.thumb-wrap{position:relative;width:calc(50% - 4px);border-radius:9px;overflow:hidden;border:1.5px solid #E0D8F4;background:#FAF8FF}
+.thumb-wrap img{width:100%;max-height:130px;object-fit:contain;display:block}
+.thumb-label{font-size:0.62rem;color:#9890C0;text-align:center;padding:3px 6px;border-top:1px solid #E0D8F4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-remove-thumb{position:absolute;top:5px;right:5px;background:rgba(255,255,255,.92);border:1px solid #E0D8F4;color:#C4608A;border-radius:6px;padding:2px 8px;font-size:0.68rem;cursor:pointer;font-weight:700}
+.add-more-btn{width:calc(50% - 4px);min-height:80px;border:2px dashed #E0D8F4;border-radius:9px;background:#FAF8FF;color:#9890C0;cursor:pointer;font-size:0.78rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .2s;font-family:Arial,sans-serif}
+.add-more-btn:hover{border-color:#6B5FC7;background:#EDE8FF;color:#6B5FC7}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;margin-top:14px}
+.btn-primary{background:#6B5FC7;color:#fff;box-shadow:0 4px 14px rgba(107,95,199,.3)}
+.btn-primary:disabled{background:#E0D8F4;color:#9890C0;cursor:not-allowed;box-shadow:none}
+.btn-mint{background:#3A8C6A;color:#fff;box-shadow:0 4px 14px rgba(58,140,106,.3)}
+.btn-outline{background:#FAF8FF;border:1.5px solid #E0D8F4;color:#5A5480}
+.saved-banner{background:#EAF8F2;border:1.5px solid #A8E6CF;border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.saved-title{font-size:0.76rem;color:#3A8C6A;font-weight:700;margin-bottom:2px}
+.saved-sub{font-size:0.7rem;color:#9890C0}
+.btn-saved{background:#3A8C6A;border:none;border-radius:8px;padding:7px 13px;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.section-title{font-weight:700;font-size:0.86rem;color:#2C2848;margin-bottom:12px}
+.loader{text-align:center;padding:44px}
+.spinner{width:38px;height:38px;border:3px solid #E0D8F4;border-top-color:#6B5FC7;border-radius:50%;margin:0 auto 18px;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{font-size:0.84rem;color:#5A5480;font-weight:600}
+.loader-step{font-size:0.78rem;color:#6B5FC7;margin-top:7px}
+.ev-list{display:flex;flex-direction:column;gap:7px;max-height:360px;overflow-y:auto;margin-bottom:14px}
+.ev-item{border-radius:10px;padding:10px 13px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:11px;border:1.5px solid}
+.ev-title{font-weight:600;font-size:0.82rem;color:#2C2848;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-meta{font-size:0.67rem;color:#5A5480;margin-top:2px}
+.ev-desc{font-size:0.64rem;color:#9890C0;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-actions{display:flex;gap:5px;flex-shrink:0}
+.btn-edit{background:#fff;border:1.5px solid #B8A9F0;color:#6B5FC7;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:0.75rem;font-weight:700}
+.btn-del{background:#fff;border:1.5px solid #F5ABCC;color:#C4608A;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:0.75rem;font-weight:700}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.tag{display:flex;align-items:center;gap:5px;font-size:0.74rem;border-radius:20px;padding:3px 10px;border:1px solid}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{background:#FFF0F4;border:1.5px solid #F5ABCC;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#C4608A;line-height:1.6;margin-top:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(44,40,72,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.modal{background:#fff;border-radius:16px;padding:26px;max-width:490px;width:100%;box-shadow:0 20px 60px rgba(107,95,199,.18);max-height:90vh;overflow-y:auto;border:1px solid #E0D8F4}
+.modal-title{font-weight:700;font-size:1rem;color:#6B5FC7;margin-bottom:18px}
+.type-btns{display:flex;gap:7px;flex-wrap:wrap}
+.type-btn{padding:6px 12px;border-radius:20px;cursor:pointer;font-size:0.78rem;transition:all .2s;font-family:Arial,sans-serif}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.modal-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.guide-step{display:flex;gap:12px;margin-bottom:13px;align-items:flex-start}
+.guide-num{width:26px;height:26px;border-radius:50%;background:#6B5FC7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
+.guide-txt{font-size:0.82rem;color:#5A5480;line-height:1.6;padding-top:3px}
+.tip{background:#EAF8F2;border:1px solid #A8E6CF;border-radius:9px;padding:12px;font-size:0.78rem;color:#3A8C6A;line-height:1.6;margin-top:12px}
+.footer{text-align:center;font-size:0.72rem;color:#9890C0;margin-top:24px}
+.add-btn{width:100%;margin-bottom:14px;padding:9px;background:transparent;border:1.5px dashed #E0D8F4;border-radius:9px;color:#9890C0;cursor:pointer;font-size:0.8rem}
+.preset-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.preset-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:22px;border:1.5px solid #E0D8F4;background:#FAF8FF;font-size:0.76rem;font-weight:600;color:#5A5480;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+.preset-btn:hover{border-color:#B8A9F0;background:#EDE8FF;color:#6B5FC7}
+.preset-btn.active{border-color:#6B5FC7;background:#EDE8FF;color:#6B5FC7;box-shadow:0 0 0 3px rgba(107,95,199,.12)}
+.ifsi-banner{background:linear-gradient(135deg,#EDE8FF 0%,#FFE8F0 100%);border:1.5px solid #B8A9F0;border-radius:11px;padding:13px 15px;margin-bottom:12px}
+.ifsi-banner-title{font-weight:700;font-size:0.82rem;color:#6B5FC7;margin-bottom:4px}
+.ifsi-banner-sub{font-size:0.72rem;color:#9890C0;line-height:1.6}
+.color-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.color-dot{display:flex;align-items:center;gap:5px;font-size:0.68rem;color:#5A5480;background:#fff;border-radius:20px;padding:2px 9px;border:1px solid #E0D8F4}
+.color-dot span{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.group-selector{background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:12px;padding:14px;margin-bottom:10px}
+.group-row{margin-bottom:13px}
+.group-row:last-child{margin-bottom:0}
+.group-row-label{font-size:0.6rem;color:#9890C0;text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.group-row-label span{background:#E0D8F4;border-radius:20px;padding:1px 7px;color:#6B5FC7;font-size:0.58rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 13px;border-radius:20px;border:1.5px solid #E0D8F4;background:#fff;font-size:0.78rem;font-weight:600;color:#5A5480;cursor:pointer;transition:all .18s;font-family:Arial,sans-serif;user-select:none}
+.chip:hover{border-color:#B8A9F0;color:#6B5FC7;background:#EDE8FF}
+.chip.selected{border-color:#6B5FC7;background:#6B5FC7;color:#fff;box-shadow:0 2px 8px rgba(107,95,199,.25)}
+.group-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#EDE8FF;border:1.5px solid #B8A9F0;border-radius:9px;padding:9px 13px;margin-top:10px}
+.group-summary-empty{font-size:0.76rem;color:#B8A9F0;font-style:italic}
+.group-summary-tag{background:#6B5FC7;color:#fff;border-radius:14px;padding:2px 10px;font-size:0.7rem;font-weight:700}
+.gp-input-wrap{display:flex;align-items:center;gap:8px;margin-top:6px}
+.gp-input-wrap input{height:36px;line-height:36px;font-size:0.8rem}
+.gp-check{color:#3A8C6A;font-size:0.75rem;font-weight:700;white-space:nowrap;opacity:0;transition:opacity .2s}
+.gp-check.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="card">
+  <div class="logo"><div class="logo-icon">📅</div><span class="logo-txt">PlanSync</span></div>
+  <h1>Ton planning <span>automatiquement</span> dans Google Agenda</h1>
+  <p class="sub">Photos de ton planning → l'IA extrait tout → fichier .ics à importer en 1 clic</p>
+</div>
+
+<div class="steps" id="steps-bar">
+  <div class="step active" id="s1"><div class="step-n">1</div><span class="step-l">Images</span></div>
+  <div class="step" id="s2"><div class="step-n">2</div><span class="step-l">Contexte</span></div>
+  <div class="step" id="s3"><div class="step-n">3</div><span class="step-l">Analyse</span></div>
+  <div class="step" id="s4"><div class="step-n">4</div><span class="step-l">Export</span></div>
+</div>
+
+<div class="card" id="upload-card">
+  <div style="font-weight:700;font-size:.9rem;color:#2C2848;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+    📸 Images du planning
+    <span style="font-size:.6rem;padding:2px 9px;border-radius:20px;background:#F0EEF8;color:#6B5FC7;border:1px solid #B8A9F0;font-weight:600">ÉTAPE 1</span>
+  </div>
+  <p style="font-size:.78rem;color:#9890C0;margin-bottom:14px;line-height:1.6">Ajoute <b>une ou plusieurs photos</b> — ex : semaine 1 + semaine 2</p>
+
+  <div class="drop" id="drop-zone" onclick="document.getElementById('file-in').click()">
+    <input type="file" id="file-in" accept="image/*" multiple style="display:none">
+    <div class="drop-icon">🖼️</div>
+    <div class="drop-title">Clique pour choisir des images</div>
+    <div class="drop-hint">JPG · PNG · WebP · Plusieurs fichiers acceptés</div>
+  </div>
+
+  <div id="multi-preview" class="multi-preview" style="display:none"></div>
+
+  <div id="saved-banner" style="display:none" class="saved-banner">
+    <div><div class="saved-title">💾 Paramètres sauvegardés</div><div class="saved-sub" id="saved-sub"></div></div>
+    <button class="btn-saved" onclick="applySaved()">Réutiliser →</button>
+  </div>
+
+  <div id="ctx-section" style="display:none;margin-top:18px">
+    <div class="section-title">🏷️ Catégorie <span style="font-weight:400;font-size:.74rem;color:#9890C0">(optionnel)</span></div>
+    <div class="preset-row">
+      <button class="preset-btn" id="preset-ifsi" onclick="togglePreset('ifsi')">🏥 Planning IFSI</button>
+      <button class="preset-btn" id="preset-other" onclick="togglePreset('other')">📋 Autre établissement</button>
+    </div>
+
+    <div id="ifsi-banner" style="display:none" class="ifsi-banner">
+      <div class="ifsi-banner-title">✅ Preset IFSI activé</div>
+      <div class="ifsi-banner-sub">Pré-rempli automatiquement :</div>
+      <div class="color-legend">
+        <div class="color-dot"><span style="background:#FF8C00"></span>Orange = Présentiel</div>
+        <div class="color-dot"><span style="background:#fff;border:1px solid #ccc"></span>Blanc = Présentiel</div>
+        <div class="color-dot"><span style="background:#3A8C6A"></span>Vert = Distanciel</div>
+        <div class="color-dot"><span style="background:#6B5FC7"></span>CM (PO) = Obligatoire</div>
+        <div class="color-dot"><span style="background:#B8A9F0"></span>TD = Obligatoire</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:4px">⚙️ Contexte <span style="font-weight:400;font-size:.74rem;color:#9890C0">(recommandé)</span></div>
+
+    <div id="ifsi-group-field" style="display:none">
+      <label class="lbl" style="margin-bottom:8px">🎓 Sélectionne tes groupes</label>
+      <div class="group-selector">
+        <div class="group-row">
+          <div class="group-row-label">Groupe principal <span>1 choix</span></div>
+          <div class="chips" id="chips-ab">
+            <button class="chip" onclick="selectChip('ab',this,'A')">Groupe A</button>
+            <button class="chip" onclick="selectChip('ab',this,'B')">Groupe B</button>
+          </div>
+        </div>
+        <div class="group-row">
+          <div class="group-row-label">Sous-groupe numérique <span>1 choix</span></div>
+          <div class="chips" id="chips-num">
+            <button class="chip" onclick="selectChip('num',this,'1/6')">1/6</button>
+            <button class="chip" onclick="selectChip('num',this,'2/6')">2/6</button>
+            <button class="chip" onclick="selectChip('num',this,'3/6')">3/6</button>
+            <button class="chip" onclick="selectChip('num',this,'4/6')">4/6</button>
+            <button class="chip" onclick="selectChip('num',this,'5/6')">5/6</button>
+            <button class="chip" onclick="selectChip('num',this,'6/6')">6/6</button>
+          </div>
+        </div>
+        <div class="group-row">
+          <div class="group-row-label">Sous-groupe lettré <span>1 choix</span></div>
+          <div class="chips" id="chips-let">
+            <button class="chip" onclick="selectChip('let',this,'A1')">A1</button>
+            <button class="chip" onclick="selectChip('let',this,'A2')">A2</button>
+            <button class="chip" onclick="selectChip('let',this,'A3')">A3</button>
+            <button class="chip" onclick="selectChip('let',this,'B1')">B1</button>
+            <button class="chip" onclick="selectChip('let',this,'B2')">B2</button>
+            <button class="chip" onclick="selectChip('let',this,'B3')">B3</button>
+          </div>
+        </div>
+        <div class="group-row">
+          <div class="group-row-label">Groupe pédagogique <span>optionnel</span></div>
+          <div class="gp-input-wrap">
+            <input type="text" id="gp-teacher" placeholder="Nom de la formatrice (ex: Mme Dupont)" oninput="updateGroupSummary()">
+            <span class="gp-check" id="gp-check">✓ Renseigné</span>
+          </div>
+        </div>
+      </div>
+      <div class="group-summary" id="group-summary">
+        <span class="group-summary-empty">Aucun groupe sélectionné</span>
+      </div>
+    </div>
+
+    <div class="grid2" id="full-ctx-fields">
+      <div class="field"><label class="lbl">Semaine de début</label><input type="date" id="f-date"></div>
+      <div class="field"><label class="lbl">Période</label><input type="text" id="f-period" placeholder="Ex: S2 2025-2026"></div>
+      <div class="field"><label class="lbl">Mon groupe</label><input type="text" id="f-group" placeholder="Ex: 6/6 ou B3"></div>
+      <div class="field"><label class="lbl">Établissement</label><input type="text" id="f-school" placeholder="Ex: IFSI, AP-HP…"></div>
+    </div>
+    <div class="field"><label class="lbl">Infos supplémentaires</label>
+      <textarea id="f-extra" placeholder="Ex: orange = présentiel, vert = distanciel…"></textarea>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="btn-analyze" disabled onclick="analyze()">✦ Analyser avec l'IA</button>
+  <div class="err" id="err-box" style="display:none"></div>
+</div>
+
+<div class="card loader" id="loader-card" style="display:none">
+  <div class="spinner"></div>
+  <div class="loader-txt" id="loader-title">Analyse en cours…</div>
+  <div class="loader-step" id="loader-msg">🔍 Lecture des images...</div>
+</div>
+
+<div class="card" id="results-card" style="display:none">
+  <div style="font-weight:700;font-size:.9rem;color:#2C2848;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+    ✅ Événements détectés
+    <span style="font-size:.6rem;padding:2px 9px;border-radius:20px;background:#EAF8F2;color:#3A8C6A;border:1px solid #A8E6CF;font-weight:600" id="ev-count">0 événements</span>
+  </div>
+  <p style="font-size:.74rem;color:#9890C0;margin-bottom:14px">✏️ modifier · ✕ supprimer · vérifie avant d'exporter</p>
+  <div class="tags" id="tags-bar"></div>
+  <div class="ev-list" id="ev-list"></div>
+  <button class="add-btn" onclick="openAdd()">+ Ajouter un créneau manuellement</button>
+  <div class="export-grid">
+    <button class="btn btn-mint" onclick="downloadICS()">⬇ Télécharger .ics</button>
+    <button class="btn btn-outline" onclick="openGuide()">📖 Guide import</button>
+  </div>
+  <button class="btn btn-outline" style="margin-top:9px" onclick="resetApp()">↺ Nouvelle analyse</button>
+</div>
+
+<div class="footer">PlanSync · IFSI Pitié-Salpêtrière · Promotion 2025-2028</div>
+</div>
+
+<div class="modal-overlay" id="edit-modal" style="display:none" onclick="closeEdit()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">✏️ Modifier le créneau</div>
+    <div class="field"><label class="lbl">Intitulé</label><input type="text" id="m-title"></div>
+    <div class="modal-grid" style="margin-bottom:12px">
+      <div><label class="lbl">Date</label><input type="date" id="m-date"></div>
+      <div><label class="lbl">Début</label><input type="time" id="m-start"></div>
+      <div><label class="lbl">Fin</label><input type="time" id="m-end"></div>
+    </div>
+    <div class="field"><label class="lbl">Lieu</label><input type="text" id="m-loc"></div>
+    <div class="field" style="margin-bottom:14px">
+      <label class="lbl">Type</label>
+      <div class="type-btns" id="type-btns"></div>
+    </div>
+    <div class="field" style="margin-bottom:18px"><label class="lbl">Description / Notes</label><textarea id="m-desc"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEdit()">Annuler</button>
+      <button class="btn btn-primary" style="margin-top:0" onclick="saveEdit()">✓ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="guide-modal" style="display:none" onclick="closeGuide()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">📅 Importer dans Google Agenda</div>
+    <div class="guide-step"><div class="guide-num">1</div><div class="guide-txt">Télécharge le fichier .ics via le bouton vert.</div></div>
+    <div class="guide-step"><div class="guide-num">2</div><div class="guide-txt">Ouvre Google Agenda sur ordinateur : <b>calendar.google.com</b></div></div>
+    <div class="guide-step"><div class="guide-num">3</div><div class="guide-txt">Clique sur ⚙️ Paramètres en haut à droite.</div></div>
+    <div class="guide-step"><div class="guide-num">4</div><div class="guide-txt">Dans le menu gauche → <b>"Importer et exporter"</b>.</div></div>
+    <div class="guide-step"><div class="guide-num">5</div><div class="guide-txt">Clique "Sélectionner un fichier" → choisis ton .ics → <b>"Importer"</b>. 🎉</div></div>
+    <div class="tip">💡 <b>Astuce :</b> Tu peux choisir dans quel calendrier importer (perso, études, stages…)</div>
+    <button class="btn btn-outline" style="margin-top:14px" onclick="closeGuide()">Fermer</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "plansync-ctx-v2";
+const LOADER_MSGS = ["🔍 Lecture des images...","🧠 Identification des créneaux...","📋 Extraction des cours et lieux...","🗓️ Mise en forme...","✨ Finalisation..."];
+const TYPE_STYLE = {
+  CM:     {bg:"#EDE8FF",border:"#B8A9F0",text:"#6B5FC7",icon:"🔵"},
+  TD:     {bg:"#E8F8F0",border:"#A8E6CF",text:"#3A8C6A",icon:"🟢"},
+  Examen: {bg:"#FFF6E0",border:"#FFD3B6",text:"#C87941",icon:"🟡"},
+  Travail:{bg:"#FFE8F0",border:"#F5ABCC",text:"#C4608A",icon:"🔴"},
+  Suivi:  {bg:"#E8F4FF",border:"#B6D8F2",text:"#4A86B8",icon:"🔷"},
+};
+const IFSI_PRESET = {
+  school:"IFSI",
+  extra:"Orange = présentiel, Blanc = présentiel, Vert = distanciel. CM avec mention PO = cours magistral obligatoire. TD = travaux dirigés obligatoires."
+};
+
+let images=[], events=[], editIdx=null, savedCtx=null, ldrTimer=null, activePreset=null;
+const ifsiGroups = {ab:null, num:null, let:null};
+
+try { const r=localStorage.getItem(STORAGE_KEY); if(r) savedCtx=JSON.parse(r); } catch(e){}
+
+document.getElementById("file-in").addEventListener("change", function(e) {
+  if(e.target.files.length) addFiles(Array.from(e.target.files));
+  e.target.value = "";
+});
+const dz = document.getElementById("drop-zone");
+dz.addEventListener("dragover", function(e){ e.preventDefault(); dz.classList.add("over"); });
+dz.addEventListener("dragleave", function(){ dz.classList.remove("over"); });
+dz.addEventListener("drop", function(e){ e.preventDefault(); dz.classList.remove("over"); if(e.dataTransfer.files.length) addFiles(Array.from(e.dataTransfer.files)); });
+
+function addFiles(files) {
+  var valid = files.filter(function(f){ return f.type.startsWith("image/"); });
+  if(!valid.length){ showErr("Images uniquement (JPG, PNG, WebP)."); return; }
+  hideErr();
+  var loaded = 0;
+  valid.forEach(function(file) {
+    var r = new FileReader();
+    r.onload = function(ev) {
+      var d = ev.target.result;
+      images.push({data:d.split(",")[1], mime:file.type, name:file.name, src:d});
+      loaded++;
+      if(loaded === valid.length) onImagesReady();
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function onImagesReady() {
+  renderPreviews();
+  document.getElementById("drop-zone").style.display = "none";
+  document.getElementById("ctx-section").style.display = "block";
+  document.getElementById("btn-analyze").disabled = false;
+  if(savedCtx) {
+    document.getElementById("saved-sub").textContent = [savedCtx.groupNum&&"Groupe: "+savedCtx.groupNum, savedCtx.school].filter(Boolean).join(" · ");
+    document.getElementById("saved-banner").style.display = "flex";
+  }
+  setStep(2);
+}
+
+function renderPreviews() {
+  var wrap = document.getElementById("multi-preview");
+  wrap.style.display = "flex";
+  wrap.innerHTML = "";
+  images.forEach(function(img, i) {
+    var div = document.createElement("div");
+    div.className = "thumb-wrap";
+    var im = document.createElement("img");
+    im.src = img.src; im.alt = "img";
+    var lbl = document.createElement("div");
+    lbl.className = "thumb-label";
+    lbl.textContent = "Image "+(i+1)+" · "+(img.name.length>20 ? img.name.slice(0,18)+"…" : img.name);
+    var btn = document.createElement("button");
+    btn.className = "btn-remove-thumb";
+    btn.textContent = "✕";
+    (function(idx){ btn.onclick = function(){ removeImg(idx); }; })(i);
+    div.appendChild(im); div.appendChild(lbl); div.appendChild(btn);
+    wrap.appendChild(div);
+  });
+  var addBtn = document.createElement("button");
+  addBtn.className = "add-more-btn";
+  addBtn.innerHTML = "<span style='font-size:1.4rem'>＋</span><span>Ajouter une image</span>";
+  addBtn.onclick = function(){ document.getElementById("file-in").click(); };
+  wrap.appendChild(addBtn);
+}
+
+function removeImg(i) {
+  images.splice(i, 1);
+  if(!images.length) {
+    document.getElementById("multi-preview").style.display = "none";
+    document.getElementById("drop-zone").style.display = "block";
+    document.getElementById("ctx-section").style.display = "none";
+    document.getElementById("saved-banner").style.display = "none";
+    document.getElementById("btn-analyze").disabled = true;
+    setStep(1);
+  } else { renderPreviews(); }
+}
+
+function selectChip(group, btn, value) {
+  document.getElementById("chips-"+group).querySelectorAll(".chip").forEach(function(c){ c.classList.remove("selected"); });
+  if(ifsiGroups[group] === value) { ifsiGroups[group] = null; }
+  else { btn.classList.add("selected"); ifsiGroups[group] = value; }
+  updateGroupSummary();
+}
+
+function updateGroupSummary() {
+  var teacher = document.getElementById("gp-teacher").value.trim();
+  document.getElementById("gp-check").classList.toggle("show", teacher.length > 0);
+  var parts = [ifsiGroups.ab&&"Groupe "+ifsiGroups.ab, ifsiGroups.num, ifsiGroups.let, teacher&&"GP: "+teacher].filter(Boolean);
+  var summary = document.getElementById("group-summary");
+  if(!parts.length) {
+    summary.innerHTML = '<span class="group-summary-empty">Aucun groupe sélectionné</span>';
+    document.getElementById("f-group").value = "";
+  } else {
+    summary.innerHTML = parts.map(function(p){ return '<span class="group-summary-tag">'+p+'</span>'; }).join("");
+    document.getElementById("f-group").value = parts.join(", ");
+  }
+}
+
+function resetIfsiChips() {
+  ["ab","num","let"].forEach(function(g) {
+    ifsiGroups[g] = null;
+    var c = document.getElementById("chips-"+g);
+    if(c) c.querySelectorAll(".chip").forEach(function(b){ b.classList.remove("selected"); });
+  });
+  var t = document.getElementById("gp-teacher"); if(t) t.value = "";
+  var gp = document.getElementById("gp-check"); if(gp) gp.classList.remove("show");
+  updateGroupSummary();
+}
+
+function togglePreset(type) {
+  if(activePreset === type) {
+    activePreset = null;
+    document.getElementById("preset-ifsi").classList.remove("active");
+    document.getElementById("preset-other").classList.remove("active");
+    document.getElementById("ifsi-banner").style.display = "none";
+    document.getElementById("ifsi-group-field").style.display = "none";
+    document.getElementById("full-ctx-fields").style.display = "grid";
+    document.getElementById("f-school").value = "";
+    document.getElementById("f-extra").value = "";
+    resetIfsiChips();
+    return;
+  }
+  activePreset = type;
+  document.getElementById("preset-ifsi").classList.toggle("active", type==="ifsi");
+  document.getElementById("preset-other").classList.toggle("active", type==="other");
+  if(type === "ifsi") {
+    document.getElementById("f-school").value = IFSI_PRESET.school;
+    document.getElementById("f-extra").value = IFSI_PRESET.extra;
+    document.getElementById("ifsi-banner").style.display = "block";
+    document.getElementById("ifsi-group-field").style.display = "block";
+    document.getElementById("full-ctx-fields").style.display = "none";
+  } else {
+    document.getElementById("ifsi-banner").style.display = "none";
+    document.getElementById("ifsi-group-field").style.display = "none";
+    document.getElementById("full-ctx-fields").style.display = "grid";
+  }
+}
+
+function applySaved() {
+  if(!savedCtx) return;
+  document.getElementById("f-group").value = savedCtx.groupNum||"";
+  document.getElementById("f-school").value = savedCtx.school||"";
+  document.getElementById("f-period").value = savedCtx.period||"";
+  document.getElementById("f-extra").value = savedCtx.extra||"";
+  document.getElementById("saved-banner").style.display = "none";
+  savedCtx = null;
+}
+
+function getForm() {
+  return {
+    startDate: document.getElementById("f-date").value,
+    period: document.getElementById("f-period").value,
+    groupNum: document.getElementById("f-group").value.trim(),
+    school: document.getElementById("f-school").value.trim(),
+    extra: document.getElementById("f-extra").value
+  };
+}
+
+function saveCtxToStorage(f) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({groupNum:f.groupNum,school:f.school,period:f.period,extra:f.extra})); } catch(e){}
+}
+
+function buildPrompt(f, n) {
+  var p = "Tu es un assistant expert en lecture d'emplois du temps universitaires et hospitaliers français (AP-HP, IFSI).\n";
+  if(n > 1) p += "L'utilisateur a fourni "+n+" images. Traite-les TOUTES et fusionne les événements sans doublon.\n";
+  p += "Retourne UNIQUEMENT un JSON valide, sans texte autour, sans backticks.\n";
+  p += 'Format: {"events":[{"title":"...","type":"CM|TD|Suivi|Examen|Travail","date":"YYYY-MM-DD","startTime":"HH:MM","endTime":"HH:MM","location":"...","description":"..."}]}\n';
+  p += "RÈGLES:\n";
+  p += "1. GROUPES: " + (f.groupNum ? 'Utilisateur = groupe "'+f.groupNum+'". Inclure CM pour tous + événements listant "'+f.groupNum+'". Exclure les autres groupes.' : "Inclure tous les événements.") + "\n";
+  p += "2. TYPES: CM (Cours Magistral), TD (Travaux Dirigés), Suivi (suivi pédagogique), Examen (partiel/DS), Travail (stage/garde).\n";
+  p += "3. HORAIRES: lire les en-têtes de colonnes. Format 09:00, 10:30.\n";
+  p += "4. DATES: " + (f.startDate ? "Semaine commence le "+f.startDate+". Lundi=J, Mardi=J+1, Mercredi=J+2, Jeudi=J+3, Vendredi=J+4." : "Lire les dates dans chaque image.") + "\n";
+  p += "5. Intitulé complet dans title. Prof + UE dans description.\n";
+  if(f.period) p += "Période: "+f.period+".\n";
+  if(f.school) p += "Etablissement: "+f.school+".\n";
+  if(f.extra) p += "Contexte: "+f.extra+"\n";
+  return p;
+}
+
+async function analyze() {
+  if(!images.length) return;
+  var f = getForm();
+  saveCtxToStorage(f);
+  hideErr();
+  document.getElementById("upload-card").style.display = "none";
+  document.getElementById("loader-card").style.display = "block";
+  document.getElementById("loader-title").textContent = images.length > 1 ? "Analyse de "+images.length+" images en cours…" : "Analyse en cours…";
+  setStep(3);
+  var idx = 0;
+  ldrTimer = setInterval(function(){ idx=(idx+1)%LOADER_MSGS.length; document.getElementById("loader-msg").textContent=LOADER_MSGS[idx]; }, 2000);
+  try {
+    var content = [];
+    images.forEach(function(img, i) {
+      if(images.length > 1) content.push({type:"text", text:"--- Image "+(i+1)+" sur "+images.length+" ---"});
+      content.push({type:"image", source:{type:"base64", media_type:img.mime, data:img.data}});
+    });
+    content.push({type:"text", text:"Analyse "+(images.length>1?"ces emplois du temps":"cet emploi du temps")+" en JSON."+(f.groupNum?" Groupe: "+f.groupNum:"")});
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:4000,
+        system:buildPrompt(f, images.length),
+        messages:[{role:"user", content:content}]
+      })
+    });
+    clearInterval(ldrTimer);
+    if(!res.ok) { var er=await res.json().catch(function(){return{};}); throw new Error("Erreur API "+res.status+": "+(er.error&&er.error.message?er.error.message:"Réessaie.")); }
+    var data = await res.json();
+    var text = data.content.map(function(b){ return b.text||""; }).join("");
+    var m = text.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error("Réponse inattendue de l'IA. Réessaie avec une image plus nette.");
+    var evts = JSON.parse(m[0]).events||[];
+    if(!evts.length) throw new Error("Aucun événement détecté. Image trop floue ?");
+    events = evts;
+    showResults();
+  } catch(e) {
+    clearInterval(ldrTimer);
+    document.getElementById("loader-card").style.display = "none";
+    document.getElementById("upload-card").style.display = "block";
+    setStep(2); showErr(e.message||String(e));
+  }
+}
+
+function showResults() {
+  document.getElementById("loader-card").style.display = "none";
+  document.getElementById("results-card").style.display = "block";
+  setStep(4); renderEvents();
+}
+
+function renderEvents() {
+  document.getElementById("ev-count").textContent = events.length+" événement"+(events.length>1?"s":"");
+  var tags = document.getElementById("tags-bar"); tags.innerHTML = "";
+  var counts = {};
+  events.forEach(function(e){ counts[e.type]=(counts[e.type]||0)+1; });
+  Object.entries(counts).forEach(function(kv) {
+    var s = TYPE_STYLE[kv[0]]||TYPE_STYLE.CM;
+    tags.innerHTML += '<div class="tag" style="background:'+s.bg+';border-color:'+s.border+';color:'+s.text+'">'+s.icon+' <b>'+kv[1]+'</b> '+kv[0]+'</div>';
+  });
+  var list = document.getElementById("ev-list"); list.innerHTML = "";
+  events.forEach(function(ev, i) {
+    var s = TYPE_STYLE[ev.type]||TYPE_STYLE.CM;
+    var ds = ev.date ? new Date(ev.date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}) : "?";
+    var ts = ev.startTime&&ev.endTime ? ev.startTime+"–"+ev.endTime : ev.startTime||"";
+    var item = document.createElement("div");
+    item.className = "ev-item";
+    item.style.background = s.bg; item.style.borderColor = s.border;
+    var editBtn = document.createElement("button"); editBtn.className="btn-edit"; editBtn.textContent="✏️";
+    var delBtn = document.createElement("button"); delBtn.className="btn-del"; delBtn.textContent="✕";
+    (function(n){ editBtn.onclick=function(){openEdit(n);}; delBtn.onclick=function(){delEv(n);}; })(i);
+    item.innerHTML = '<span style="font-size:1rem">'+s.icon+'</span>'
+      +'<div style="min-width:0"><div class="ev-title">'+ev.title+'</div>'
+      +'<div class="ev-meta">'+ds+' · '+ts+(ev.location?' · 📍'+ev.location:'')+'</div>'
+      +(ev.description?'<div class="ev-desc">'+ev.description+'</div>':'')+'</div>';
+    var actions = document.createElement("div"); actions.className="ev-actions";
+    actions.appendChild(editBtn); actions.appendChild(delBtn);
+    item.appendChild(actions);
+    list.appendChild(item);
+  });
+}
+
+function delEv(i) { events.splice(i,1); renderEvents(); }
+
+function openEdit(i) {
+  editIdx = i; var ev = events[i];
+  document.getElementById("m-title").value = ev.title||"";
+  document.getElementById("m-date").value = ev.date||"";
+  document.getElementById("m-start").value = ev.startTime||"";
+  document.getElementById("m-end").value = ev.endTime||"";
+  document.getElementById("m-loc").value = ev.location||"";
+  document.getElementById("m-desc").value = ev.description||"";
+  buildTypeBtns(ev.type||"CM");
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
+function openAdd() {
+  editIdx = -1;
+  document.getElementById("m-title").value = "Nouveau créneau";
+  document.getElementById("m-date").value = "";
+  document.getElementById("m-start").value = "09:00";
+  document.getElementById("m-end").value = "10:00";
+  document.getElementById("m-loc").value = "";
+  document.getElementById("m-desc").value = "";
+  buildTypeBtns("CM");
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
+function buildTypeBtns(selected) {
+  var wrap = document.getElementById("type-btns"); wrap.innerHTML = "";
+  Object.entries(TYPE_STYLE).forEach(function(kv) {
+    var t=kv[0], s=kv[1], active=(t===selected);
+    var btn = document.createElement("button");
+    btn.className = "type-btn"; btn.id = "tbtn-"+t;
+    btn.style.background = active ? s.bg : "#FAF8FF";
+    btn.style.border = "1.5px solid "+(active ? s.border : "#E0D8F4");
+    btn.style.color = active ? s.text : "#9890C0";
+    btn.style.fontWeight = active ? "700" : "400";
+    btn.textContent = s.icon+" "+t;
+    (function(type){ btn.onclick = function(){ buildTypeBtns(type); }; })(t);
+    wrap.appendChild(btn);
+  });
+}
+
+function getSelectedType() {
+  var keys = Object.keys(TYPE_STYLE);
+  for(var i=0;i<keys.length;i++) {
+    var b = document.getElementById("tbtn-"+keys[i]);
+    if(b && b.style.fontWeight==="700") return keys[i];
+  }
+  return "CM";
+}
+
+function saveEdit() {
+  var ev = {
+    title:document.getElementById("m-title").value,
+    date:document.getElementById("m-date").value,
+    startTime:document.getElementById("m-start").value,
+    endTime:document.getElementById("m-end").value,
+    location:document.getElementById("m-loc").value,
+    description:document.getElementById("m-desc").value,
+    type:getSelectedType()
+  };
+  if(editIdx===-1) events.push(ev); else events[editIdx]=ev;
+  closeEdit(); renderEvents();
+}
+
+function closeEdit(){ document.getElementById("edit-modal").style.display="none"; editIdx=null; }
+function openGuide(){ document.getElementById("guide-modal").style.display="flex"; }
+function closeGuide(){ document.getElementById("guide-modal").style.display="none"; }
+
+function generateICS() {
+  var lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PlanSync//FR","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
+  events.forEach(function(ev,i) {
+    var uid="ps-"+Date.now()+"-"+i;
+    var stamp=new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+    var dt=function(d,t){ return d&&t ? d.replace(/-/g,"")+"T"+t.replace(":","")+"00" : null; };
+    var s=dt(ev.date,ev.startTime), e=dt(ev.date,ev.endTime)||s;
+    if(!s) return;
+    lines.push("BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+stamp,"SUMMARY:"+ev.title,"DTSTART:"+s,"DTEND:"+e);
+    if(ev.location) lines.push("LOCATION:"+ev.location);
+    if(ev.description) lines.push("DESCRIPTION:"+ev.description);
+    lines.push("END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+function downloadICS() {
+  var blob=new Blob([generateICS()],{type:"text/calendar;charset=utf-8"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="planning-plansync.ics"; a.click();
+}
+
+function setStep(n) {
+  for(var i=1;i<=4;i++) document.getElementById("s"+i).className="step"+(i<n?" done":i===n?" active":"");
+}
+function showErr(msg){ var b=document.getElementById("err-box"); b.textContent="⚠ "+msg; b.style.display="block"; }
+function hideErr(){ document.getElementById("err-box").style.display="none"; }
+
+function resetApp() {
+  images=[]; events=[]; editIdx=null; activePreset=null;
+  document.getElementById("upload-card").style.display="block";
+  document.getElementById("loader-card").style.display="none";
+  document.getElementById("results-card").style.display="none";
+  var mp=document.getElementById("multi-preview"); mp.style.display="none"; mp.innerHTML="";
+  document.getElementById("drop-zone").style.display="block";
+  document.getElementById("ctx-section").style.display="none";
+  document.getElementById("saved-banner").style.display="none";
+  document.getElementById("btn-analyze").disabled=true;
+  document.getElementById("f-date").value="";
+  document.getElementById("preset-ifsi").classList.remove("active");
+  document.getElementById("preset-other").classList.remove("active");
+  document.getElementById("ifsi-banner").style.display="none";
+  document.getElementById("ifsi-group-field").style.display="none";
+  document.getElementById("full-ctx-fields").style.display="grid";
+  resetIfsiChips();
+  hideErr(); setStep(1);
+  try { var saved=localStorage.getItem(STORAGE_KEY); if(saved) savedCtx=JSON.parse(saved); } catch(e){}
+}
+</script>
+</body>
+</html>
