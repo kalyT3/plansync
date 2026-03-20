@@ -21,15 +21,11 @@ input,textarea,select{width:100%;background:#FAF8FF;border:1.5px solid #E0D8F4;b
 textarea{min-height:60px;resize:vertical}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .field{margin-bottom:10px}
-
-/* Drop zone multi */
 .drop-multi{border:2px dashed #E0D8F4;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#FAF8FF;transition:all .2s}
 .drop-multi:hover,.drop-multi.over{border-color:#6B5FC7;background:#EDE8FF}
 .drop-icon{font-size:2rem;margin-bottom:8px}
 .drop-title{font-weight:700;color:#2C2848;margin-bottom:4px}
 .drop-hint{font-size:0.72rem;color:#9890C0}
-
-/* Image queue */
 .img-queue{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .img-item{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:12px;background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:10px;padding:10px 12px}
 .img-thumb{width:56px;height:42px;object-fit:cover;border-radius:6px;border:1px solid #E0D8F4}
@@ -42,20 +38,10 @@ textarea{min-height:60px;resize:vertical}
 .img-status.error{color:#C4608A;font-weight:600}
 .img-remove{background:none;border:none;color:#C4608A;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:5px}
 .img-dl{background:#EAF8F2;border:1px solid #A8E6CF;border-radius:6px;padding:4px 10px;color:#3A8C6A;font-size:0.72rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
-
-/* Saved banner */
 .saved-banner{background:#EAF8F2;border:1.5px solid #A8E6CF;border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
 .saved-title{font-size:0.76rem;color:#3A8C6A;font-weight:700;margin-bottom:2px}
 .saved-sub{font-size:0.7rem;color:#9890C0}
 .btn-saved{background:#3A8C6A;border:none;border-radius:8px;padding:7px 13px;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap}
-
-/* Progress bar */
-.progress-wrap{margin-top:14px}
-.progress-label{display:flex;justify-content:space-between;font-size:0.74rem;color:#5A5480;margin-bottom:6px}
-.progress-bar-bg{height:8px;background:#E0D8F4;border-radius:4px;overflow:hidden}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,#6B5FC7,#C4608A);border-radius:4px;transition:width .5s ease}
-
-/* Buttons */
 .btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;margin-top:14px;font-family:Arial,sans-serif}
 .btn-primary{background:#6B5FC7;color:#fff;box-shadow:0 4px 14px rgba(107,95,199,.3)}
 .btn-primary:disabled{background:#E0D8F4;color:#9890C0;cursor:not-allowed;box-shadow:none}
@@ -63,9 +49,6 @@ textarea{min-height:60px;resize:vertical}
 .btn-outline{background:#FAF8FF;border:1.5px solid #E0D8F4;color:#5A5480}
 .btn-peach{background:#C87941;color:#fff;box-shadow:0 4px 14px rgba(200,121,65,.3)}
 .export-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.export-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
-
-/* Results summary */
 .week-results{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .week-card{background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:10px;padding:12px 14px}
 .week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -75,8 +58,6 @@ textarea{min-height:60px;resize:vertical}
 .week-actions{display:flex;gap:7px;margin-top:8px}
 .btn-dl-week{background:#3A8C6A;border:none;border-radius:7px;padding:5px 12px;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
 .btn-edit-week{background:#EDE8FF;border:1px solid #B8A9F0;border-radius:7px;padding:5px 12px;color:#6B5FC7;font-size:0.74rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
-
-/* Edit panel */
 .ev-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:12px}
 .ev-item{border-radius:9px;padding:9px 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;border:1.5px solid}
 .ev-title{font-weight:600;font-size:0.8rem;color:#2C2848;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -86,8 +67,6 @@ textarea{min-height:60px;resize:vertical}
 .btn-del{background:#fff;border:1.5px solid #F5ABCC;color:#C4608A;cursor:pointer;padding:3px 7px;border-radius:5px;font-size:0.72rem;font-weight:700}
 .tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .tag{display:flex;align-items:center;gap:4px;font-size:0.72rem;border-radius:20px;padding:3px 9px;border:1px solid}
-
-/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(44,40,72,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
 .modal{background:#fff;border-radius:16px;padding:26px;max-width:490px;width:100%;box-shadow:0 20px 60px rgba(107,95,199,.18);max-height:90vh;overflow-y:auto;border:1px solid #E0D8F4}
 .modal-title{font-weight:700;font-size:1rem;color:#6B5FC7;margin-bottom:18px}
@@ -103,6 +82,34 @@ textarea{min-height:60px;resize:vertical}
 .section-title{font-weight:700;font-size:0.86rem;color:#2C2848;margin-bottom:12px}
 .footer{text-align:center;font-size:0.72rem;color:#9890C0;margin-top:24px}
 .add-btn{width:100%;margin-bottom:12px;padding:9px;background:transparent;border:1.5px dashed #E0D8F4;border-radius:9px;color:#9890C0;cursor:pointer;font-size:0.8rem;font-family:Arial,sans-serif}
+
+/* ── IFSI preset ── */
+.preset-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.preset-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:22px;border:1.5px solid #E0D8F4;background:#FAF8FF;font-size:0.76rem;font-weight:600;color:#5A5480;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+.preset-btn:hover{border-color:#B8A9F0;background:#EDE8FF;color:#6B5FC7}
+.preset-btn.active{border-color:#6B5FC7;background:#EDE8FF;color:#6B5FC7;box-shadow:0 0 0 3px rgba(107,95,199,.12)}
+.ifsi-banner{background:linear-gradient(135deg,#EDE8FF 0%,#FFE8F0 100%);border:1.5px solid #B8A9F0;border-radius:11px;padding:13px 15px;margin-bottom:12px}
+.ifsi-banner-title{font-weight:700;font-size:0.82rem;color:#6B5FC7;margin-bottom:4px}
+.ifsi-banner-sub{font-size:0.72rem;color:#9890C0;line-height:1.6}
+.color-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.color-dot{display:flex;align-items:center;gap:5px;font-size:0.68rem;color:#5A5480;background:#fff;border-radius:20px;padding:2px 9px;border:1px solid #E0D8F4}
+.color-dot span{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.group-selector{background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:12px;padding:14px;margin-bottom:10px}
+.group-row{margin-bottom:13px}
+.group-row:last-child{margin-bottom:0}
+.group-row-label{font-size:0.6rem;color:#9890C0;text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.group-row-label span{background:#E0D8F4;border-radius:20px;padding:1px 7px;color:#6B5FC7;font-size:0.58rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 13px;border-radius:20px;border:1.5px solid #E0D8F4;background:#fff;font-size:0.78rem;font-weight:600;color:#5A5480;cursor:pointer;transition:all .18s;font-family:Arial,sans-serif;user-select:none}
+.chip:hover{border-color:#B8A9F0;color:#6B5FC7;background:#EDE8FF}
+.chip.selected{border-color:#6B5FC7;background:#6B5FC7;color:#fff;box-shadow:0 2px 8px rgba(107,95,199,.25)}
+.group-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#EDE8FF;border:1.5px solid #B8A9F0;border-radius:9px;padding:9px 13px;margin-top:10px}
+.group-summary-empty{font-size:0.76rem;color:#B8A9F0;font-style:italic}
+.group-summary-tag{background:#6B5FC7;color:#fff;border-radius:14px;padding:2px 10px;font-size:0.7rem;font-weight:700}
+.gp-input-wrap{display:flex;align-items:center;gap:8px;margin-top:6px}
+.gp-input-wrap input{padding:7px 12px}
+.gp-check{color:#3A8C6A;font-size:0.75rem;font-weight:700;white-space:nowrap;opacity:0;transition:opacity .2s}
+.gp-check.show{opacity:1}
 </style>
 
 </head>
@@ -140,15 +147,87 @@ textarea{min-height:60px;resize:vertical}
 </div>
 
 <div id="ctx-section" style="display:none;margin-top:18px">
-  <div class="section-title">⚙️ Contexte <span style="font-weight:400;font-size:.74rem;color:#9890C0">(appliqué à toutes les semaines)</span></div>
-  <div class="grid2">
-    <div class="field"><label class="lbl">Mon groupe</label><input type="text" id="f-group" placeholder="Ex: 6/6 ou B3"></div>
-    <div class="field"><label class="lbl">Établissement</label><input type="text" id="f-school" placeholder="Ex: IFSI, AP-HP…"></div>
-    <div class="field"><label class="lbl">Période / Semestre</label><input type="text" id="f-period" placeholder="Ex: S2 2025-2026"></div>
+
+  <!-- Catégorie -->
+  <div class="section-title">🏷️ Catégorie <span style="font-weight:400;font-size:.74rem;color:#9890C0">(optionnel)</span></div>
+  <div class="preset-row">
+    <button class="preset-btn" id="preset-ifsi" onclick="togglePreset('ifsi')">🏥 Planning IFSI</button>
+    <button class="preset-btn" id="preset-other" onclick="togglePreset('other')">📋 Autre établissement</button>
   </div>
-  <div class="field"><label class="lbl">Infos supplémentaires</label>
-    <textarea id="f-extra" placeholder="Ex: orange = présentiel, vert = distanciel…"></textarea>
+
+  <!-- Bandeau IFSI -->
+  <div id="ifsi-banner" style="display:none" class="ifsi-banner">
+    <div class="ifsi-banner-title">✅ Preset IFSI activé</div>
+    <div class="ifsi-banner-sub">Pré-rempli automatiquement :</div>
+    <div class="color-legend">
+      <div class="color-dot"><span style="background:#FF8C00"></span>Orange = Présentiel</div>
+      <div class="color-dot"><span style="background:#fff;border:1px solid #ccc"></span>Blanc = Présentiel</div>
+      <div class="color-dot"><span style="background:#3A8C6A"></span>Vert = Distanciel</div>
+      <div class="color-dot"><span style="background:#6B5FC7"></span>CM (PO) = Obligatoire</div>
+      <div class="color-dot"><span style="background:#B8A9F0"></span>TD = Obligatoire</div>
+    </div>
   </div>
+
+  <div class="section-title" style="margin-top:4px">⚙️ Contexte <span style="font-weight:400;font-size:.74rem;color:#9890C0">(appliqué à toutes les semaines)</span></div>
+
+  <!-- Chips IFSI -->
+  <div id="ifsi-group-field" style="display:none">
+    <label class="lbl" style="margin-bottom:8px">🎓 Sélectionne tes groupes</label>
+    <div class="group-selector">
+      <div class="group-row">
+        <div class="group-row-label">Groupe principal <span>1 choix</span></div>
+        <div class="chips" id="chips-ab">
+          <button class="chip" onclick="selectChip('ab',this,'A')">Groupe A</button>
+          <button class="chip" onclick="selectChip('ab',this,'B')">Groupe B</button>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-row-label">Sous-groupe numérique <span>1 choix</span></div>
+        <div class="chips" id="chips-num">
+          <button class="chip" onclick="selectChip('num',this,'1/6')">1/6</button>
+          <button class="chip" onclick="selectChip('num',this,'2/6')">2/6</button>
+          <button class="chip" onclick="selectChip('num',this,'3/6')">3/6</button>
+          <button class="chip" onclick="selectChip('num',this,'4/6')">4/6</button>
+          <button class="chip" onclick="selectChip('num',this,'5/6')">5/6</button>
+          <button class="chip" onclick="selectChip('num',this,'6/6')">6/6</button>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-row-label">Sous-groupe lettré <span>1 choix</span></div>
+        <div class="chips" id="chips-let">
+          <button class="chip" onclick="selectChip('let',this,'A1')">A1</button>
+          <button class="chip" onclick="selectChip('let',this,'A2')">A2</button>
+          <button class="chip" onclick="selectChip('let',this,'A3')">A3</button>
+          <button class="chip" onclick="selectChip('let',this,'B1')">B1</button>
+          <button class="chip" onclick="selectChip('let',this,'B2')">B2</button>
+          <button class="chip" onclick="selectChip('let',this,'B3')">B3</button>
+        </div>
+      </div>
+      <div class="group-row">
+        <div class="group-row-label">Groupe pédagogique <span>optionnel</span></div>
+        <div class="gp-input-wrap">
+          <input type="text" id="gp-teacher" placeholder="Nom de la formatrice (ex: Mme Dupont)" oninput="updateGroupSummary()">
+          <span class="gp-check" id="gp-check">✓ Renseigné</span>
+        </div>
+      </div>
+    </div>
+    <div class="group-summary" id="group-summary">
+      <span class="group-summary-empty">Aucun groupe sélectionné</span>
+    </div>
+  </div>
+
+  <!-- Champs standard -->
+  <div id="full-ctx-fields">
+    <div class="grid2">
+      <div class="field"><label class="lbl">Mon groupe</label><input type="text" id="f-group" placeholder="Ex: 6/6 ou B3"></div>
+      <div class="field"><label class="lbl">Établissement</label><input type="text" id="f-school" placeholder="Ex: IFSI, AP-HP…"></div>
+      <div class="field"><label class="lbl">Période / Semestre</label><input type="text" id="f-period" placeholder="Ex: S2 2025-2026"></div>
+    </div>
+    <div class="field"><label class="lbl">Infos supplémentaires</label>
+      <textarea id="f-extra" placeholder="Ex: orange = présentiel, vert = distanciel…"></textarea>
+    </div>
+  </div>
+
 </div>
 
 <button class="btn btn-primary" id="btn-analyze" disabled onclick="analyzeAll()">✦ Analyser toutes les semaines</button>
@@ -165,17 +244,12 @@ textarea{min-height:60px;resize:vertical}
       <span style="font-size:.6rem;padding:2px 9px;border-radius:20px;background:#EAF8F2;color:#3A8C6A;border:1px solid #A8E6CF;font-weight:600" id="results-badge"></span>
     </div>
     <p style="font-size:.74rem;color:#9890C0;margin-bottom:16px">Télécharge chaque semaine séparément ou toutes en une seule fois</p>
-
-```
-<div class="week-results" id="week-results"></div>
-
-<div class="export-grid">
-  <button class="btn btn-peach" onclick="downloadAll()">⬇ Tout télécharger (.ics combiné)</button>
-  <button class="btn btn-outline" onclick="openGuide()">📖 Guide import</button>
-</div>
-<button class="btn btn-outline" style="margin-top:9px" onclick="resetApp()">↺ Nouvelle analyse</button>
-```
-
+    <div class="week-results" id="week-results"></div>
+    <div class="export-grid">
+      <button class="btn btn-peach" onclick="downloadAll()">⬇ Tout télécharger (.ics combiné)</button>
+      <button class="btn btn-outline" onclick="openGuide()">📖 Guide import</button>
+    </div>
+    <button class="btn btn-outline" style="margin-top:9px" onclick="resetApp()">↺ Nouvelle analyse</button>
   </div>
 
   <div class="footer">PlanSync · <a href="https://kalyt3.github.io/plansync" style="color:#B8A9F0">kalyt3.github.io/plansync</a> · IFSI Pitié-Salpêtrière</div>
@@ -245,16 +319,21 @@ const TYPE_STYLE = {
   Travail:{bg:"#FFE8F0",border:"#F5ABCC",text:"#C4608A",icon:"🔴"},
   Suivi:  {bg:"#E8F4FF",border:"#B6D8F2",text:"#4A86B8",icon:"🔷"},
 };
+const IFSI_PRESET = {
+  school: "IFSI",
+  extra: "Orange = présentiel, Blanc = présentiel, Vert = distanciel. CM avec mention PO = cours magistral obligatoire. TD = travaux dirigés obligatoires."
+};
 
-// State
-let queue = []; // [{file, mime, preview, name, status, events}]
+let queue = [];
 let savedCtx = null;
 let editWeekIdx = null, editEvIdx = null;
 let weekModalIdx = null;
+let activePreset = null;
+const ifsiGroups = {ab:null, num:null, let:null};
 
 try { const r=localStorage.getItem(STORAGE_KEY); if(r) savedCtx=JSON.parse(r); } catch{}
 
-// ─── FILE HANDLING ─────────────────────────────────────────────────────────
+// ─── FILE HANDLING ──────────────────────────────────────────────────────────
 document.getElementById("file-in").addEventListener("change", e => {
   if(e.target.files.length) addFiles(Array.from(e.target.files));
 });
@@ -276,7 +355,6 @@ function addFiles(files) {
     };
     r.readAsDataURL(file);
   });
-  // Show ctx + saved after first file
   document.getElementById("ctx-section").style.display = "block";
   if(savedCtx) {
     document.getElementById("saved-sub").textContent = [savedCtx.groupNum&&"Groupe: "+savedCtx.groupNum, savedCtx.school].filter(Boolean).join(" · ");
@@ -289,13 +367,12 @@ function renderQueue() {
   wrap.innerHTML = "";
   queue.forEach((item, i) => {
     const statusTxt = {pending:"⏳ En attente", analyzing:"🔄 Analyse en cours…", done:`✅ ${item.events.length} événement${item.events.length>1?"s":""}`, error:"❌ Erreur"}[item.status];
-    const statusClass = item.status;
     const dlBtn = item.status==="done" ? `<button class="img-dl" onclick="downloadWeek(${i})">⬇ .ics</button>` : "";
     wrap.innerHTML += `<div class="img-item" id="qi-${i}">
       <img class="img-thumb" src="${item.preview}" alt="">
       <div class="img-info">
         <div class="img-name">${item.name}</div>
-        <div class="img-status ${statusClass}" id="qs-${i}">${statusTxt}</div>
+        <div class="img-status ${item.status}" id="qs-${i}">${statusTxt}</div>
       </div>
       <div style="display:flex;gap:6px;align-items:center">
         ${dlBtn}
@@ -335,7 +412,74 @@ function getForm() {
   };
 }
 
-// ─── ANALYSIS ─────────────────────────────────────────────────────────────
+// ─── IFSI CHIPS ─────────────────────────────────────────────────────────────
+function selectChip(group, btn, value) {
+  document.getElementById("chips-"+group).querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
+  if(ifsiGroups[group] === value) { ifsiGroups[group] = null; }
+  else { btn.classList.add("selected"); ifsiGroups[group] = value; }
+  updateGroupSummary();
+}
+
+function updateGroupSummary() {
+  const teacher = document.getElementById("gp-teacher").value.trim();
+  document.getElementById("gp-check").classList.toggle("show", teacher.length > 0);
+  const parts = [
+    ifsiGroups.ab && "Groupe "+ifsiGroups.ab,
+    ifsiGroups.num,
+    ifsiGroups.let,
+    teacher && "GP: "+teacher
+  ].filter(Boolean);
+  const summary = document.getElementById("group-summary");
+  if(!parts.length) {
+    summary.innerHTML = '<span class="group-summary-empty">Aucun groupe sélectionné</span>';
+    document.getElementById("f-group").value = "";
+  } else {
+    summary.innerHTML = parts.map(p => `<span class="group-summary-tag">${p}</span>`).join("");
+    document.getElementById("f-group").value = parts.join(", ");
+  }
+}
+
+function resetIfsiChips() {
+  ["ab","num","let"].forEach(g => {
+    ifsiGroups[g] = null;
+    const c = document.getElementById("chips-"+g);
+    if(c) c.querySelectorAll(".chip").forEach(b => b.classList.remove("selected"));
+  });
+  const t = document.getElementById("gp-teacher"); if(t) t.value = "";
+  const gp = document.getElementById("gp-check"); if(gp) gp.classList.remove("show");
+  updateGroupSummary();
+}
+
+function togglePreset(type) {
+  if(activePreset === type) {
+    activePreset = null;
+    document.getElementById("preset-ifsi").classList.remove("active");
+    document.getElementById("preset-other").classList.remove("active");
+    document.getElementById("ifsi-banner").style.display = "none";
+    document.getElementById("ifsi-group-field").style.display = "none";
+    document.getElementById("full-ctx-fields").style.display = "block";
+    document.getElementById("f-school").value = "";
+    document.getElementById("f-extra").value = "";
+    resetIfsiChips();
+    return;
+  }
+  activePreset = type;
+  document.getElementById("preset-ifsi").classList.toggle("active", type==="ifsi");
+  document.getElementById("preset-other").classList.toggle("active", type==="other");
+  if(type === "ifsi") {
+    document.getElementById("f-school").value = IFSI_PRESET.school;
+    document.getElementById("f-extra").value = IFSI_PRESET.extra;
+    document.getElementById("ifsi-banner").style.display = "block";
+    document.getElementById("ifsi-group-field").style.display = "block";
+    document.getElementById("full-ctx-fields").style.display = "none";
+  } else {
+    document.getElementById("ifsi-banner").style.display = "none";
+    document.getElementById("ifsi-group-field").style.display = "none";
+    document.getElementById("full-ctx-fields").style.display = "block";
+  }
+}
+
+// ─── ANALYSIS ───────────────────────────────────────────────────────────────
 function buildPrompt(f) {
   return `Tu es un assistant expert en lecture d'emplois du temps universitaires et hospitaliers français (AP-HP, IFSI).
 Analyse l'image et retourne UNIQUEMENT un JSON valide, sans texte autour, sans backticks.
@@ -356,9 +500,6 @@ async function analyzeAll() {
   document.getElementById("btn-analyze").disabled = true;
   document.getElementById("results-card").style.display = "none";
 
-  const pending = queue.filter(q => q.status !== "done");
-  let done = queue.filter(q => q.status === "done").length;
-
   for(let i = 0; i < queue.length; i++) {
     const item = queue[i];
     if(item.status === "done") continue;
@@ -367,10 +508,22 @@ async function analyzeAll() {
     renderQueue();
 
     try {
+      let apiKey = localStorage.getItem("plansync-api-key") || "";
+      if(!apiKey) {
+        apiKey = prompt("🔑 Entre ta clé API Anthropic (sk-ant-…)\nElle sera sauvegardée localement dans ton navigateur :");
+        if(!apiKey) throw new Error("Clé API annulée.");
+        localStorage.setItem("plansync-api-key", apiKey.trim());
+      }
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "x-api-key": apiKey.trim(),
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514", max_tokens:4000,
+          model:"claude-sonnet-4-6", max_tokens:4000,
           system: buildPrompt(f),
           messages:[{role:"user",content:[
             {type:"image",source:{type:"base64",media_type:item.mime,data:item.b64}},
@@ -378,11 +531,11 @@ async function analyzeAll() {
           ]}]
         })
       });
-      if(!res.ok){ const e=await res.json(); throw new Error("Erreur API "+res.status+": "+(e.error?.message||"")); }
+      if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error("Erreur "+res.status+": "+(e.error?.message||JSON.stringify(e))); }
       const data = await res.json();
       const text = data.content.map(b=>b.text||"").join("");
       const m = text.match(/\{[\s\S]*\}/);
-      if(!m) throw new Error("Réponse invalide");
+      if(!m) throw new Error("Pas de JSON dans la réponse: "+text.slice(0,120));
       const evts = JSON.parse(m[0]).events||[];
       item.events = evts;
       item.status = "done";
@@ -396,11 +549,11 @@ async function analyzeAll() {
   showResults();
 }
 
-// ─── RESULTS ───────────────────────────────────────────────────────────────
+// ─── RESULTS ────────────────────────────────────────────────────────────────
 function showResults() {
   const done = queue.filter(q=>q.status==="done");
   const totalEvts = done.reduce((acc,q)=>acc+q.events.length,0);
-  document.getElementById("results-badge").textContent = `${done.length} semaine${done.length>1?"s":" "} · ${totalEvts} événements`;
+  document.getElementById("results-badge").textContent = `${done.length} semaine${done.length>1?"s":""} · ${totalEvts} événements`;
   document.getElementById("results-card").style.display = "block";
 
   const wrap = document.getElementById("week-results");
@@ -430,7 +583,6 @@ function showResults() {
     </div>`;
   });
 
-  // Errors
   queue.filter(q=>q.status==="error").forEach((item,i)=>{
     wrap.innerHTML += `<div class="week-card" style="border-color:#F5ABCC;background:#FFF5F8">
       <div class="week-title" style="color:#C4608A">❌ Échec — ${item.name}</div>
@@ -446,7 +598,7 @@ function formatDate(d) {
   return new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
 }
 
-// ─── ICS GENERATION ────────────────────────────────────────────────────────
+// ─── ICS ────────────────────────────────────────────────────────────────────
 function generateICS(events, calName) {
   const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PlanSync//FR","CALSCALE:GREGORIAN","METHOD:PUBLISH",`X-WR-CALNAME:${calName||"PlanSync"}`];
   events.forEach((ev,i)=>{
@@ -483,7 +635,7 @@ function downloadAll() {
   dlBlob(generateICS(allEvents,"PlanSync — Toutes les semaines"), "planning_toutes_semaines.ics");
 }
 
-// ─── WEEK MODAL ────────────────────────────────────────────────────────────
+// ─── WEEK MODAL ─────────────────────────────────────────────────────────────
 function openWeekModal(i) {
   weekModalIdx = i;
   const item = queue[i];
@@ -495,14 +647,12 @@ function openWeekModal(i) {
 function renderWeekModal() {
   if(weekModalIdx===null) return;
   const item = queue[weekModalIdx];
-  // Tags
   const typeCounts={};
   item.events.forEach(e=>{typeCounts[e.type]=(typeCounts[e.type]||0)+1;});
   document.getElementById("wm-tags").innerHTML = Object.entries(typeCounts).map(([t,c])=>{
     const s=TYPE_STYLE[t]||TYPE_STYLE.CM;
     return `<div class="tag" style="background:${s.bg};border-color:${s.border};color:${s.text}">${s.icon} <b>${c}</b> ${t}</div>`;
   }).join("");
-  // Events
   const list = document.getElementById("wm-ev-list");
   list.innerHTML = "";
   item.events.forEach((ev,i)=>{
@@ -526,14 +676,9 @@ function renderWeekModal() {
 
 function closeWeekModal(){document.getElementById("week-modal").style.display="none";weekModalIdx=null;}
 function downloadWeekFromModal(){if(weekModalIdx!==null)downloadWeek(weekModalIdx);}
+function delEv(wi,ei){queue[wi].events.splice(ei,1);renderWeekModal();showResults();}
 
-function delEv(wi,ei){
-  queue[wi].events.splice(ei,1);
-  renderWeekModal();
-  showResults();
-}
-
-// ─── EDIT MODAL ────────────────────────────────────────────────────────────
+// ─── EDIT MODAL ─────────────────────────────────────────────────────────────
 function openEdit(wi,ei){
   editWeekIdx=wi; editEvIdx=ei;
   const ev=queue[wi].events[ei];
@@ -595,12 +740,19 @@ function hideErr(){document.getElementById("err-box").style.display="none";}
 
 function resetApp(){
   queue=[];
+  activePreset=null;
   document.getElementById("img-queue").innerHTML="";
   document.getElementById("ctx-section").style.display="none";
   document.getElementById("saved-banner").style.display="none";
   document.getElementById("results-card").style.display="none";
   document.getElementById("btn-analyze").disabled=true;
   document.getElementById("file-in").value="";
+  document.getElementById("preset-ifsi").classList.remove("active");
+  document.getElementById("preset-other").classList.remove("active");
+  document.getElementById("ifsi-banner").style.display="none";
+  document.getElementById("ifsi-group-field").style.display="none";
+  document.getElementById("full-ctx-fields").style.display="block";
+  resetIfsiChips();
   hideErr();
   try{const r=localStorage.getItem(STORAGE_KEY);if(r)savedCtx=JSON.parse(r);}catch{}
 }
