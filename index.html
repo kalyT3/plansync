@@ -4,447 +4,606 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlanSync — Planning vers Google Agenda</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<title>PlanSync</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #F0EEF8; font-family: Arial, sans-serif; min-height: 100vh; }
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: #F0EEF8; }
-  ::-webkit-scrollbar-thumb { background: #B8A9F0; border-radius: 3px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-  .fade-in { animation: fadeIn 0.4s ease both; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F0EEF8;font-family:Arial,sans-serif;min-height:100vh;padding:24px 16px 60px}
+.wrap{max-width:680px;margin:0 auto}
+.card{background:#fff;border-radius:14px;padding:22px;margin-bottom:16px;border:1px solid #E0D8F4;box-shadow:0 3px 16px rgba(184,169,240,0.1)}
+h1{font-size:clamp(1.4rem,3.5vw,2rem);color:#2C2848;font-weight:800;margin-bottom:8px;line-height:1.2}
+h1 span{color:#6B5FC7}
+.sub{color:#9890C0;font-size:0.83rem;line-height:1.6}
+.logo{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.logo-icon{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#6B5FC7,#C4608A);display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-txt{font-weight:800;font-size:1.1rem;color:#6B5FC7}
+label.lbl{display:block;font-size:0.62rem;color:#9890C0;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+input,textarea,select{width:100%;background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:8px;padding:9px 12px;color:#2C2848;font-size:0.83rem;outline:none;font-family:Arial,sans-serif}
+textarea{min-height:60px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{margin-bottom:10px}
+
+/* Drop zone multi */
+.drop-multi{border:2px dashed #E0D8F4;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#FAF8FF;transition:all .2s}
+.drop-multi:hover,.drop-multi.over{border-color:#6B5FC7;background:#EDE8FF}
+.drop-icon{font-size:2rem;margin-bottom:8px}
+.drop-title{font-weight:700;color:#2C2848;margin-bottom:4px}
+.drop-hint{font-size:0.72rem;color:#9890C0}
+
+/* Image queue */
+.img-queue{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.img-item{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:12px;background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:10px;padding:10px 12px}
+.img-thumb{width:56px;height:42px;object-fit:cover;border-radius:6px;border:1px solid #E0D8F4}
+.img-info{min-width:0}
+.img-name{font-size:0.8rem;font-weight:600;color:#2C2848;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.img-status{font-size:0.68rem;margin-top:3px}
+.img-status.pending{color:#9890C0}
+.img-status.analyzing{color:#6B5FC7;font-weight:600}
+.img-status.done{color:#3A8C6A;font-weight:600}
+.img-status.error{color:#C4608A;font-weight:600}
+.img-remove{background:none;border:none;color:#C4608A;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:5px}
+.img-dl{background:#EAF8F2;border:1px solid #A8E6CF;border-radius:6px;padding:4px 10px;color:#3A8C6A;font-size:0.72rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
+
+/* Saved banner */
+.saved-banner{background:#EAF8F2;border:1.5px solid #A8E6CF;border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.saved-title{font-size:0.76rem;color:#3A8C6A;font-weight:700;margin-bottom:2px}
+.saved-sub{font-size:0.7rem;color:#9890C0}
+.btn-saved{background:#3A8C6A;border:none;border-radius:8px;padding:7px 13px;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* Progress bar */
+.progress-wrap{margin-top:14px}
+.progress-label{display:flex;justify-content:space-between;font-size:0.74rem;color:#5A5480;margin-bottom:6px}
+.progress-bar-bg{height:8px;background:#E0D8F4;border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#6B5FC7,#C4608A);border-radius:4px;transition:width .5s ease}
+
+/* Buttons */
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all .3s;margin-top:14px;font-family:Arial,sans-serif}
+.btn-primary{background:#6B5FC7;color:#fff;box-shadow:0 4px 14px rgba(107,95,199,.3)}
+.btn-primary:disabled{background:#E0D8F4;color:#9890C0;cursor:not-allowed;box-shadow:none}
+.btn-mint{background:#3A8C6A;color:#fff;box-shadow:0 4px 14px rgba(58,140,106,.3)}
+.btn-outline{background:#FAF8FF;border:1.5px solid #E0D8F4;color:#5A5480}
+.btn-peach{background:#C87941;color:#fff;box-shadow:0 4px 14px rgba(200,121,65,.3)}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.export-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+
+/* Results summary */
+.week-results{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.week-card{background:#FAF8FF;border:1.5px solid #E0D8F4;border-radius:10px;padding:12px 14px}
+.week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.week-title{font-weight:700;font-size:0.85rem;color:#2C2848}
+.week-badge{font-size:0.62rem;padding:2px 9px;border-radius:20px;background:#EAF8F2;color:#3A8C6A;border:1px solid #A8E6CF;font-weight:600}
+.week-meta{font-size:0.72rem;color:#9890C0}
+.week-actions{display:flex;gap:7px;margin-top:8px}
+.btn-dl-week{background:#3A8C6A;border:none;border-radius:7px;padding:5px 12px;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
+.btn-edit-week{background:#EDE8FF;border:1px solid #B8A9F0;border-radius:7px;padding:5px 12px;color:#6B5FC7;font-size:0.74rem;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
+
+/* Edit panel */
+.ev-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;margin-bottom:12px}
+.ev-item{border-radius:9px;padding:9px 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;border:1.5px solid}
+.ev-title{font-weight:600;font-size:0.8rem;color:#2C2848;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-meta{font-size:0.66rem;color:#5A5480;margin-top:2px}
+.ev-actions{display:flex;gap:5px;flex-shrink:0}
+.btn-edit{background:#fff;border:1.5px solid #B8A9F0;color:#6B5FC7;cursor:pointer;padding:3px 7px;border-radius:5px;font-size:0.72rem;font-weight:700}
+.btn-del{background:#fff;border:1.5px solid #F5ABCC;color:#C4608A;cursor:pointer;padding:3px 7px;border-radius:5px;font-size:0.72rem;font-weight:700}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.tag{display:flex;align-items:center;gap:4px;font-size:0.72rem;border-radius:20px;padding:3px 9px;border:1px solid}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,40,72,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.modal{background:#fff;border-radius:16px;padding:26px;max-width:490px;width:100%;box-shadow:0 20px 60px rgba(107,95,199,.18);max-height:90vh;overflow-y:auto;border:1px solid #E0D8F4}
+.modal-title{font-weight:700;font-size:1rem;color:#6B5FC7;margin-bottom:18px}
+.type-btns{display:flex;gap:7px;flex-wrap:wrap}
+.type-btn{padding:6px 12px;border-radius:20px;cursor:pointer;font-size:0.78rem;transition:all .2s;font-family:Arial,sans-serif}
+.modal-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.modal-footer{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.guide-step{display:flex;gap:12px;margin-bottom:13px;align-items:flex-start}
+.guide-num{width:26px;height:26px;border-radius:50%;background:#6B5FC7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
+.guide-txt{font-size:0.82rem;color:#5A5480;line-height:1.6;padding-top:3px}
+.tip{background:#EAF8F2;border:1px solid #A8E6CF;border-radius:9px;padding:12px;font-size:0.78rem;color:#3A8C6A;line-height:1.6;margin-top:12px}
+.err{background:#FFF0F4;border:1.5px solid #F5ABCC;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#C4608A;line-height:1.6;margin-top:12px}
+.section-title{font-weight:700;font-size:0.86rem;color:#2C2848;margin-bottom:12px}
+.footer{text-align:center;font-size:0.72rem;color:#9890C0;margin-top:24px}
+.add-btn{width:100%;margin-bottom:12px;padding:9px;background:transparent;border:1.5px dashed #E0D8F4;border-radius:9px;color:#9890C0;cursor:pointer;font-size:0.8rem;font-family:Arial,sans-serif}
 </style>
+
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useRef, useCallback, useEffect } = React;
+<div class="wrap">
 
-// ─── PALETTE PASTEL ────────────────────────────────────────────────────────
-const P = {
-bg:         “#F0EEF8”,
-white:      “#FFFFFF”,
-offwhite:   “#FAF8FF”,
-card:       “#FFFFFF”,
-lavender:   “#B8A9F0”,
-lavenderD:  “#6B5FC7”,
-rose:       “#F5ABCC”,
-roseD:      “#C4608A”,
-mint:       “#A8E6CF”,
-mintD:      “#3A8C6A”,
-peach:      “#FFD3B6”,
-peachD:     “#C87941”,
-sky:        “#B6D8F2”,
-skyD:       “#4A86B8”,
-textDark:   “#2C2848”,
-textMid:    “#5A5480”,
-textLight:  “#9890C0”,
-border:     “#E0D8F4”,
-};
+  <div class="card">
+    <div class="logo"><div class="logo-icon">📅</div><span class="logo-txt">PlanSync</span></div>
+    <h1>Ton planning <span>automatiquement</span> dans Google Agenda</h1>
+    <p class="sub">Uploade une ou plusieurs photos de planning → l'IA analyse chaque semaine → génère les fichiers .ics</p>
+  </div>
 
+  <!-- UPLOAD CARD -->
+
+  <div class="card" id="upload-card">
+    <div style="font-weight:700;font-size:.9rem;color:#2C2848;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+      📸 Images des plannings
+      <span style="font-size:.6rem;padding:2px 9px;border-radius:20px;background:#F0EEF8;color:#6B5FC7;border:1px solid #B8A9F0;font-weight:600">MULTI-SEMAINES</span>
+    </div>
+    <p style="font-size:.78rem;color:#9890C0;margin-bottom:14px;line-height:1.6">Sélectionne plusieurs photos à la fois — une par semaine</p>
+
+```
+<div class="drop-multi" id="drop-zone" onclick="document.getElementById('file-in').click()">
+  <input type="file" id="file-in" accept="image/*" multiple style="display:none">
+  <div class="drop-icon">🖼️</div>
+  <div class="drop-title">Clique ou glisse tes images ici</div>
+  <div class="drop-hint">JPG · PNG · WebP · <b>plusieurs fichiers acceptés</b></div>
+</div>
+
+<div id="img-queue" class="img-queue"></div>
+
+<div id="saved-banner" style="display:none" class="saved-banner">
+  <div><div class="saved-title">💾 Paramètres sauvegardés</div><div class="saved-sub" id="saved-sub"></div></div>
+  <button class="btn-saved" onclick="applySaved()">Réutiliser →</button>
+</div>
+
+<div id="ctx-section" style="display:none;margin-top:18px">
+  <div class="section-title">⚙️ Contexte <span style="font-weight:400;font-size:.74rem;color:#9890C0">(appliqué à toutes les semaines)</span></div>
+  <div class="grid2">
+    <div class="field"><label class="lbl">Mon groupe</label><input type="text" id="f-group" placeholder="Ex: 6/6 ou B3"></div>
+    <div class="field"><label class="lbl">Établissement</label><input type="text" id="f-school" placeholder="Ex: IFSI, AP-HP…"></div>
+    <div class="field"><label class="lbl">Période / Semestre</label><input type="text" id="f-period" placeholder="Ex: S2 2025-2026"></div>
+  </div>
+  <div class="field"><label class="lbl">Infos supplémentaires</label>
+    <textarea id="f-extra" placeholder="Ex: orange = présentiel, vert = distanciel…"></textarea>
+  </div>
+</div>
+
+<button class="btn btn-primary" id="btn-analyze" disabled onclick="analyzeAll()">✦ Analyser toutes les semaines</button>
+<div class="err" id="err-box" style="display:none"></div>
+```
+
+  </div>
+
+  <!-- RESULTS CARD -->
+
+  <div class="card" id="results-card" style="display:none">
+    <div style="font-weight:700;font-size:.9rem;color:#2C2848;margin-bottom:4px;display:flex;align-items:center;gap:8px">
+      ✅ Résultats
+      <span style="font-size:.6rem;padding:2px 9px;border-radius:20px;background:#EAF8F2;color:#3A8C6A;border:1px solid #A8E6CF;font-weight:600" id="results-badge"></span>
+    </div>
+    <p style="font-size:.74rem;color:#9890C0;margin-bottom:16px">Télécharge chaque semaine séparément ou toutes en une seule fois</p>
+
+```
+<div class="week-results" id="week-results"></div>
+
+<div class="export-grid">
+  <button class="btn btn-peach" onclick="downloadAll()">⬇ Tout télécharger (.ics combiné)</button>
+  <button class="btn btn-outline" onclick="openGuide()">📖 Guide import</button>
+</div>
+<button class="btn btn-outline" style="margin-top:9px" onclick="resetApp()">↺ Nouvelle analyse</button>
+```
+
+  </div>
+
+  <div class="footer">PlanSync · <a href="https://kalyt3.github.io/plansync" style="color:#B8A9F0">kalyt3.github.io/plansync</a> · IFSI Pitié-Salpêtrière</div>
+</div>
+
+<!-- EDIT MODAL -->
+
+<div class="modal-overlay" id="edit-modal" style="display:none" onclick="closeEdit()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">✏️ Modifier le créneau</div>
+    <div class="field"><label class="lbl">Intitulé</label><input type="text" id="m-title"></div>
+    <div class="modal-grid3" style="margin-bottom:12px">
+      <div><label class="lbl">Date</label><input type="date" id="m-date"></div>
+      <div><label class="lbl">Début</label><input type="time" id="m-start"></div>
+      <div><label class="lbl">Fin</label><input type="time" id="m-end"></div>
+    </div>
+    <div class="field"><label class="lbl">Lieu</label><input type="text" id="m-loc"></div>
+    <div class="field" style="margin-bottom:14px">
+      <label class="lbl">Type</label>
+      <div class="type-btns" id="type-btns"></div>
+    </div>
+    <div class="field" style="margin-bottom:18px"><label class="lbl">Description</label><textarea id="m-desc"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEdit()" style="margin-top:0">Annuler</button>
+      <button class="btn btn-primary" style="margin-top:0" onclick="saveEdit()">✓ Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK DETAIL MODAL -->
+
+<div class="modal-overlay" id="week-modal" style="display:none" onclick="closeWeekModal()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:600px">
+    <div class="modal-title" id="week-modal-title">📅 Semaine</div>
+    <div class="tags" id="wm-tags"></div>
+    <div class="ev-list" id="wm-ev-list"></div>
+    <button class="add-btn" onclick="openAddForWeek()">+ Ajouter un créneau</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <button class="btn btn-mint" style="margin-top:0" onclick="downloadWeekFromModal()">⬇ Télécharger .ics</button>
+      <button class="btn btn-outline" style="margin-top:0" onclick="closeWeekModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- GUIDE MODAL -->
+
+<div class="modal-overlay" id="guide-modal" style="display:none" onclick="closeGuide()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">📅 Importer dans Google Agenda</div>
+    <div class="guide-step"><div class="guide-num">1</div><div class="guide-txt">Télécharge le fichier .ics (par semaine ou combiné).</div></div>
+    <div class="guide-step"><div class="guide-num">2</div><div class="guide-txt">Ouvre Google Agenda sur ordinateur : <b>calendar.google.com</b></div></div>
+    <div class="guide-step"><div class="guide-num">3</div><div class="guide-txt">Clique sur ⚙️ Paramètres en haut à droite.</div></div>
+    <div class="guide-step"><div class="guide-num">4</div><div class="guide-txt">Dans le menu gauche → <b>"Importer et exporter"</b>.</div></div>
+    <div class="guide-step"><div class="guide-num">5</div><div class="guide-txt">Sélectionne le .ics → <b>"Importer"</b>. 🎉</div></div>
+    <div class="tip">💡 <b>Astuce :</b> Pour importer plusieurs semaines d'un coup, utilise le fichier <b>combiné</b> — toutes les semaines en un seul import !</div>
+    <button class="btn btn-outline" style="margin-top:14px" onclick="closeGuide()">Fermer</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "plansync-ctx-v2";
+const LOADER_MSGS = ["🔍 Lecture de l'image...","🧠 Identification des créneaux...","📋 Extraction des cours et lieux...","🗓️ Mise en forme...","✨ Finalisation..."];
 const TYPE_STYLE = {
-CM:     { bg:”#EDE8FF”, border:”#B8A9F0”, text:”#6B5FC7”, icon:“🔵”, label:“CM” },
-TD:     { bg:”#E8F8F0”, border:”#A8E6CF”, text:”#3A8C6A”, icon:“🟢”, label:“TD” },
-Examen: { bg:”#FFF6E0”, border:”#FFD3B6”, text:”#C87941”, icon:“🟡”, label:“Examen” },
-Travail:{ bg:”#FFE8F0”, border:”#F5ABCC”, text:”#C4608A”, icon:“🔴”, label:“Travail” },
-Suivi:  { bg:”#E8F4FF”, border:”#B6D8F2”, text:”#4A86B8”, icon:“🔷”, label:“Suivi” },
+  CM:     {bg:"#EDE8FF",border:"#B8A9F0",text:"#6B5FC7",icon:"🔵"},
+  TD:     {bg:"#E8F8F0",border:"#A8E6CF",text:"#3A8C6A",icon:"🟢"},
+  Examen: {bg:"#FFF6E0",border:"#FFD3B6",text:"#C87941",icon:"🟡"},
+  Travail:{bg:"#FFE8F0",border:"#F5ABCC",text:"#C4608A",icon:"🔴"},
+  Suivi:  {bg:"#E8F4FF",border:"#B6D8F2",text:"#4A86B8",icon:"🔷"},
 };
 
-const STATUS_STYLE = {
-“À réviser”: { bg:”#FFE8EC”, text:”#C0404A” },
-“En cours”:  { bg:”#FFF8D0”, text:”#A07800” },
-“Maîtrisé”:  { bg:”#D8F8E8”, text:”#287848” },
-};
+// State
+let queue = []; // [{file, mime, preview, name, status, events}]
+let savedCtx = null;
+let editWeekIdx = null, editEvIdx = null;
+let weekModalIdx = null;
 
-const STORAGE_KEY = “plansync-ctx-v2”;
+try { const r=localStorage.getItem(STORAGE_KEY); if(r) savedCtx=JSON.parse(r); } catch{}
 
-function loadCtx() {
-try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; } catch { return null; }
-}
-function saveCtx(f) {
-try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ groupNum:f.groupNum, school:f.school, period:f.period, extra:f.extra })); } catch {}
-}
-
-const LOADER_MSGS = [
-“🔍 Lecture de l’image…”,
-“🧠 Identification des créneaux horaires…”,
-“📋 Extraction des cours, TD et lieux…”,
-“🗓️ Mise en forme des événements…”,
-“✨ Finalisation…”,
-];
-
-function buildPrompt({ startDate, period, groupNum, school, extra }) {
-return `Tu es un assistant expert en lecture d’emplois du temps universitaires et hospitaliers français (AP-HP, IFSI, fac de médecine).
-Analyse l’image et retourne UNIQUEMENT un JSON valide, sans texte autour, sans backticks.
-Format: {“events”:[{“title”:”…”,“type”:“CM|TD|Suivi|Examen|Travail”,“date”:“YYYY-MM-DD”,“startTime”:“HH:MM”,“endTime”:“HH:MM”,“location”:”…”,“description”:”…”}]}
-RÈGLES:
-
-1. GROUPES: ${groupNum ? `Utilisateur = groupe "${groupNum}". Inclure événements pour tous + événements listant "${groupNum}". Exclure autres groupes. Prendre la salle de "${groupNum}".` : “Inclure tous les événements.”}
-1. TYPES: distingue bien CM (Cours Magistral), TD (Travaux Dirigés), Suivi (suivi pédagogique), Examen (partiel/DS), Travail (stage/garde).
-1. HORAIRES: lire les en-têtes de colonnes. Format “09:00”,“10:30”,“12:45”.
-1. DATES: ${startDate ? `Semaine commence le ${startDate}. Lundi=J, Mardi=J+1, Mercredi=J+2, Jeudi=J+3, Vendredi=J+4.` : `Lire les dates dans l'image (ex "16 mars 2026" → "2026-03-16").`}
-1. Intitulé complet dans title. Prof + UE dans description.
-   ${period ? `Période: ${period}.` : “”}${school ? ` Etablissement: ${school}.` : “”}${extra ? ` Contexte: ${extra}` : “”}`;
-   }
-
-function generateICS(events) {
-const lines = [“BEGIN:VCALENDAR”,“VERSION:2.0”,“PRODID:-//PlanSync//FR”,“CALSCALE:GREGORIAN”,“METHOD:PUBLISH”];
-events.forEach((ev, i) => {
-const uid = `ps-${Date.now()}-${i}`;
-const stamp = new Date().toISOString().replace(/[-:.]/g,””).slice(0,15)+“Z”;
-const dt = (d,t) => d&&t ? d.replace(/-/g,””)+“T”+t.replace(”:”,””)+“00” : null;
-const s = dt(ev.date, ev.startTime), e = dt(ev.date, ev.endTime)||s;
-if (!s) return;
-lines.push(“BEGIN:VEVENT”,`UID:${uid}`,`DTSTAMP:${stamp}`,`SUMMARY:${ev.title}`,`DTSTART:${s}`,`DTEND:${e}`);
-if (ev.location) lines.push(`LOCATION:${ev.location}`);
-if (ev.description) lines.push(`DESCRIPTION:${ev.description}`);
-lines.push(“END:VEVENT”);
+// ─── FILE HANDLING ─────────────────────────────────────────────────────────
+document.getElementById("file-in").addEventListener("change", e => {
+  if(e.target.files.length) addFiles(Array.from(e.target.files));
 });
-lines.push(“END:VCALENDAR”);
-return lines.join(”\r\n”);
+const dz = document.getElementById("drop-zone");
+dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("over"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("over"));
+dz.addEventListener("drop", e => {
+  e.preventDefault(); dz.classList.remove("over");
+  if(e.dataTransfer.files.length) addFiles(Array.from(e.dataTransfer.files));
+});
+
+function addFiles(files) {
+  files.forEach(file => {
+    if(!file.type.startsWith("image/")) return;
+    const r = new FileReader();
+    r.onload = e => {
+      queue.push({ file, mime: file.type, preview: e.target.result, b64: e.target.result.split(",")[1], name: file.name, status: "pending", events: [] });
+      renderQueue();
+    };
+    r.readAsDataURL(file);
+  });
+  // Show ctx + saved after first file
+  document.getElementById("ctx-section").style.display = "block";
+  if(savedCtx) {
+    document.getElementById("saved-sub").textContent = [savedCtx.groupNum&&"Groupe: "+savedCtx.groupNum, savedCtx.school].filter(Boolean).join(" · ");
+    document.getElementById("saved-banner").style.display = "flex";
+  }
+}
+
+function renderQueue() {
+  const wrap = document.getElementById("img-queue");
+  wrap.innerHTML = "";
+  queue.forEach((item, i) => {
+    const statusTxt = {pending:"⏳ En attente", analyzing:"🔄 Analyse en cours…", done:`✅ ${item.events.length} événement${item.events.length>1?"s":""}`, error:"❌ Erreur"}[item.status];
+    const statusClass = item.status;
+    const dlBtn = item.status==="done" ? `<button class="img-dl" onclick="downloadWeek(${i})">⬇ .ics</button>` : "";
+    wrap.innerHTML += `<div class="img-item" id="qi-${i}">
+      <img class="img-thumb" src="${item.preview}" alt="">
+      <div class="img-info">
+        <div class="img-name">${item.name}</div>
+        <div class="img-status ${statusClass}" id="qs-${i}">${statusTxt}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${dlBtn}
+        ${item.status!=="analyzing"?`<button class="img-remove" onclick="removeImg(${i})">✕</button>`:""}
+      </div>
+    </div>`;
+  });
+  document.getElementById("btn-analyze").disabled = queue.length === 0 || queue.every(q=>q.status==="done");
+}
+
+function removeImg(i) {
+  queue.splice(i, 1);
+  renderQueue();
+  if(queue.length === 0) {
+    document.getElementById("ctx-section").style.display = "none";
+    document.getElementById("saved-banner").style.display = "none";
+    document.getElementById("btn-analyze").disabled = true;
+  }
+}
+
+function applySaved() {
+  if(!savedCtx) return;
+  document.getElementById("f-group").value = savedCtx.groupNum||"";
+  document.getElementById("f-school").value = savedCtx.school||"";
+  document.getElementById("f-period").value = savedCtx.period||"";
+  document.getElementById("f-extra").value = savedCtx.extra||"";
+  document.getElementById("saved-banner").style.display = "none";
+  savedCtx = null;
+}
+
+function getForm() {
+  return {
+    groupNum: document.getElementById("f-group").value.trim(),
+    school: document.getElementById("f-school").value.trim(),
+    period: document.getElementById("f-period").value,
+    extra: document.getElementById("f-extra").value,
+  };
+}
+
+// ─── ANALYSIS ─────────────────────────────────────────────────────────────
+function buildPrompt(f) {
+  return `Tu es un assistant expert en lecture d'emplois du temps universitaires et hospitaliers français (AP-HP, IFSI).
+Analyse l'image et retourne UNIQUEMENT un JSON valide, sans texte autour, sans backticks.
+Format: {"events":[{"title":"...","type":"CM|TD|Suivi|Examen|Travail","date":"YYYY-MM-DD","startTime":"HH:MM","endTime":"HH:MM","location":"...","description":"..."}]}
+RÈGLES:
+1. GROUPES: ${f.groupNum?`Utilisateur = groupe "${f.groupNum}". Inclure CM pour tous + événements listant "${f.groupNum}". Exclure autres groupes. Prendre la salle de "${f.groupNum}".`:"Inclure tous les événements."}
+2. TYPES: CM (Cours Magistral), TD (Travaux Dirigés), Suivi (suivi pédagogique), Examen (partiel/DS), Travail (stage/garde).
+3. HORAIRES: lire les en-têtes de colonnes. Format "09:00","10:30".
+4. DATES: Lire les dates dans l'image (ex "16 mars 2026" → "2026-03-16"). Si pas de dates visibles utiliser lundi prochain comme référence.
+5. Intitulé complet dans title. Prof + UE dans description.
+${f.period?"Période: "+f.period+".":""}${f.school?" Etablissement: "+f.school+".":""}${f.extra?" Contexte: "+f.extra:""}`;
+}
+
+async function analyzeAll() {
+  const f = getForm();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(f)); } catch{}
+  hideErr();
+  document.getElementById("btn-analyze").disabled = true;
+  document.getElementById("results-card").style.display = "none";
+
+  const pending = queue.filter(q => q.status !== "done");
+  let done = queue.filter(q => q.status === "done").length;
+
+  for(let i = 0; i < queue.length; i++) {
+    const item = queue[i];
+    if(item.status === "done") continue;
+
+    item.status = "analyzing";
+    renderQueue();
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          model:"claude-sonnet-4-20250514", max_tokens:4000,
+          system: buildPrompt(f),
+          messages:[{role:"user",content:[
+            {type:"image",source:{type:"base64",media_type:item.mime,data:item.b64}},
+            {type:"text",text:"Analyse cet emploi du temps en JSON."+(f.groupNum?" Groupe: "+f.groupNum:"")}
+          ]}]
+        })
+      });
+      if(!res.ok){ const e=await res.json(); throw new Error("Erreur API "+res.status+": "+(e.error?.message||"")); }
+      const data = await res.json();
+      const text = data.content.map(b=>b.text||"").join("");
+      const m = text.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error("Réponse invalide");
+      const evts = JSON.parse(m[0]).events||[];
+      item.events = evts;
+      item.status = "done";
+    } catch(e) {
+      item.status = "error";
+      item.error = e.message;
+    }
+    renderQueue();
+  }
+
+  showResults();
+}
+
+// ─── RESULTS ───────────────────────────────────────────────────────────────
+function showResults() {
+  const done = queue.filter(q=>q.status==="done");
+  const totalEvts = done.reduce((acc,q)=>acc+q.events.length,0);
+  document.getElementById("results-badge").textContent = `${done.length} semaine${done.length>1?"s":" "} · ${totalEvts} événements`;
+  document.getElementById("results-card").style.display = "block";
+
+  const wrap = document.getElementById("week-results");
+  wrap.innerHTML = "";
+  queue.forEach((item, i) => {
+    if(item.status !== "done") return;
+    const dates = item.events.map(e=>e.date).filter(Boolean).sort();
+    const dateRange = dates.length ? formatDate(dates[0]) + (dates.length>1?" → "+formatDate(dates[dates.length-1]):"") : "Dates inconnues";
+    const typeCounts = {};
+    item.events.forEach(e=>{typeCounts[e.type]=(typeCounts[e.type]||0)+1;});
+    const tagsHtml = Object.entries(typeCounts).map(([t,c])=>{
+      const s=TYPE_STYLE[t]||TYPE_STYLE.CM;
+      return `<span style="background:${s.bg};border:1px solid ${s.border};color:${s.text};font-size:.68rem;border-radius:20px;padding:2px 8px">${s.icon} ${c} ${t}</span>`;
+    }).join(" ");
+
+    wrap.innerHTML += `<div class="week-card">
+      <div class="week-header">
+        <div class="week-title">📅 Semaine ${i+1} — ${item.name.replace(/\.[^/.]+$/,"")}</div>
+        <span class="week-badge">${item.events.length} événement${item.events.length>1?"s":""}</span>
+      </div>
+      <div class="week-meta">${dateRange}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${tagsHtml}</div>
+      <div class="week-actions">
+        <button class="btn-dl-week" onclick="downloadWeek(${i})">⬇ Télécharger .ics</button>
+        <button class="btn-edit-week" onclick="openWeekModal(${i})">✏️ Voir & modifier</button>
+      </div>
+    </div>`;
+  });
+
+  // Errors
+  queue.filter(q=>q.status==="error").forEach((item,i)=>{
+    wrap.innerHTML += `<div class="week-card" style="border-color:#F5ABCC;background:#FFF5F8">
+      <div class="week-title" style="color:#C4608A">❌ Échec — ${item.name}</div>
+      <div style="font-size:.72rem;color:#9890C0;margin-top:4px">${item.error||"Erreur inconnue"}</div>
+    </div>`;
+  });
+
+  document.getElementById("results-card").scrollIntoView({behavior:"smooth"});
+}
+
+function formatDate(d) {
+  if(!d) return "?";
+  return new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+}
+
+// ─── ICS GENERATION ────────────────────────────────────────────────────────
+function generateICS(events, calName) {
+  const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PlanSync//FR","CALSCALE:GREGORIAN","METHOD:PUBLISH",`X-WR-CALNAME:${calName||"PlanSync"}`];
+  events.forEach((ev,i)=>{
+    const uid="ps-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);
+    const stamp=new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+    const dt=(d,t)=>d&&t?d.replace(/-/g,"")+"T"+t.replace(":","")+"00":null;
+    const s=dt(ev.date,ev.startTime),e=dt(ev.date,ev.endTime)||s;
+    if(!s)return;
+    lines.push("BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+stamp,"SUMMARY:"+ev.title,"DTSTART:"+s,"DTEND:"+e);
+    if(ev.location)lines.push("LOCATION:"+ev.location);
+    if(ev.description)lines.push("DESCRIPTION:"+ev.description);
+    lines.push("END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+function dlBlob(content, filename) {
+  const blob = new Blob([content],{type:"text/calendar;charset=utf-8"});
+  const a = Object.assign(document.createElement("a"),{href:URL.createObjectURL(blob),download:filename});
+  a.click();
+}
+
+function downloadWeek(i) {
+  const item = queue[i];
+  if(!item||!item.events.length) return;
+  const name = item.name.replace(/\.[^/.]+$/,"").replace(/\s+/g,"_");
+  dlBlob(generateICS(item.events, "Semaine "+(i+1)), `planning_${name}.ics`);
+}
+
+function downloadAll() {
+  const allEvents = queue.filter(q=>q.status==="done").flatMap(q=>q.events);
+  if(!allEvents.length) return;
+  dlBlob(generateICS(allEvents,"PlanSync — Toutes les semaines"), "planning_toutes_semaines.ics");
+}
+
+// ─── WEEK MODAL ────────────────────────────────────────────────────────────
+function openWeekModal(i) {
+  weekModalIdx = i;
+  const item = queue[i];
+  document.getElementById("week-modal-title").textContent = "📅 Semaine "+(i+1)+" — "+item.name.replace(/\.[^/.]+$/,"");
+  renderWeekModal();
+  document.getElementById("week-modal").style.display = "flex";
+}
+
+function renderWeekModal() {
+  if(weekModalIdx===null) return;
+  const item = queue[weekModalIdx];
+  // Tags
+  const typeCounts={};
+  item.events.forEach(e=>{typeCounts[e.type]=(typeCounts[e.type]||0)+1;});
+  document.getElementById("wm-tags").innerHTML = Object.entries(typeCounts).map(([t,c])=>{
+    const s=TYPE_STYLE[t]||TYPE_STYLE.CM;
+    return `<div class="tag" style="background:${s.bg};border-color:${s.border};color:${s.text}">${s.icon} <b>${c}</b> ${t}</div>`;
+  }).join("");
+  // Events
+  const list = document.getElementById("wm-ev-list");
+  list.innerHTML = "";
+  item.events.forEach((ev,i)=>{
+    const s=TYPE_STYLE[ev.type]||TYPE_STYLE.CM;
+    const dateStr=ev.date?new Date(ev.date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}):"?";
+    const timeStr=ev.startTime&&ev.endTime?ev.startTime+"–"+ev.endTime:ev.startTime||"";
+    list.innerHTML+=`<div class="ev-item" style="background:${s.bg};border-color:${s.border}">
+      <span style="font-size:.95rem">${s.icon}</span>
+      <div style="min-width:0">
+        <div class="ev-title">${ev.title}</div>
+        <div class="ev-meta">${dateStr} · ${timeStr}${ev.location?" · 📍"+ev.location:""}</div>
+        ${ev.description?`<div style="font-size:.63rem;color:#9890C0;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ev.description}</div>`:""}
+      </div>
+      <div class="ev-actions">
+        <button class="btn-edit" onclick="openEdit(${weekModalIdx},${i})">✏️</button>
+        <button class="btn-del" onclick="delEv(${weekModalIdx},${i})">✕</button>
+      </div>
+    </div>`;
+  });
+}
+
+function closeWeekModal(){document.getElementById("week-modal").style.display="none";weekModalIdx=null;}
+function downloadWeekFromModal(){if(weekModalIdx!==null)downloadWeek(weekModalIdx);}
+
+function delEv(wi,ei){
+  queue[wi].events.splice(ei,1);
+  renderWeekModal();
+  showResults();
 }
 
 // ─── EDIT MODAL ────────────────────────────────────────────────────────────
-function EditModal({ event, onSave, onClose }) {
-const [ev, setEv] = useState({…event});
-const inp = (id, label, type=“text”) => (
-<div style={{marginBottom:14}}>
-<div style={{fontSize:“0.65rem”,color:P.textLight,textTransform:“uppercase”,letterSpacing:“0.07em”,marginBottom:5}}>{label}</div>
-<input type={type} value={ev[id]||””} onChange={e=>setEv(v=>({…v,[id]:e.target.value}))}
-style={{width:“100%”,background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:8,padding:“9px 12px”,color:P.textDark,fontSize:“0.85rem”,outline:“none”}}/>
-</div>
-);
-return (
-<div onClick={onClose} style={{position:“fixed”,inset:0,background:“rgba(44,40,72,0.45)”,zIndex:200,display:“flex”,alignItems:“center”,justifyContent:“center”,padding:16,backdropFilter:“blur(6px)”}}>
-<div onClick={e=>e.stopPropagation()} style={{background:P.white,borderRadius:16,padding:28,maxWidth:500,width:“100%”,boxShadow:“0 20px 60px rgba(107,95,199,0.18)”,maxHeight:“90vh”,overflowY:“auto”,border:`1px solid ${P.border}`}}>
-<div style={{fontWeight:700,fontSize:“1rem”,color:P.lavenderD,marginBottom:20}}>✏️ Modifier le créneau</div>
-{inp(“title”,“Intitulé”)}
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr 1fr”,gap:10}}>
-{inp(“date”,“Date”,“date”)}{inp(“startTime”,“Début”,“time”)}{inp(“endTime”,“Fin”,“time”)}
-</div>
-{inp(“location”,“Lieu”)}
-<div style={{marginBottom:14}}>
-<div style={{fontSize:“0.65rem”,color:P.textLight,textTransform:“uppercase”,letterSpacing:“0.07em”,marginBottom:6}}>Type</div>
-<div style={{display:“flex”,gap:7,flexWrap:“wrap”}}>
-{Object.entries(TYPE_STYLE).map(([t,s])=>(
-<button key={t} onClick={()=>setEv(v=>({…v,type:t}))}
-style={{padding:“6px 12px”,borderRadius:20,border:`1.5px solid ${ev.type===t?s.border:P.border}`,background:ev.type===t?s.bg:P.offwhite,color:ev.type===t?s.text:P.textLight,cursor:“pointer”,fontSize:“0.78rem”,fontWeight:ev.type===t?700:400,transition:“all .2s”}}>
-{s.icon} {t}
-</button>
-))}
-</div>
-</div>
-<div style={{marginBottom:20}}>
-<div style={{fontSize:“0.65rem”,color:P.textLight,textTransform:“uppercase”,letterSpacing:“0.07em”,marginBottom:5}}>Description / Notes</div>
-<textarea value={ev.description||””} onChange={e=>setEv(v=>({…v,description:e.target.value}))}
-style={{width:“100%”,background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:8,padding:“9px 12px”,color:P.textDark,fontSize:“0.83rem”,outline:“none”,minHeight:64,resize:“vertical”}}/>
-</div>
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:10}}>
-<button onClick={onClose} style={{padding:“11px”,background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:9,color:P.textMid,cursor:“pointer”,fontSize:“0.85rem”,fontWeight:600}}>Annuler</button>
-<button onClick={()=>onSave(ev)} style={{padding:“11px”,background:P.lavenderD,border:“none”,borderRadius:9,color:“white”,cursor:“pointer”,fontSize:“0.85rem”,fontWeight:700}}>✓ Enregistrer</button>
-</div>
-</div>
-</div>
-);
+function openEdit(wi,ei){
+  editWeekIdx=wi; editEvIdx=ei;
+  const ev=queue[wi].events[ei];
+  document.getElementById("m-title").value=ev.title||"";
+  document.getElementById("m-date").value=ev.date||"";
+  document.getElementById("m-start").value=ev.startTime||"";
+  document.getElementById("m-end").value=ev.endTime||"";
+  document.getElementById("m-loc").value=ev.location||"";
+  document.getElementById("m-desc").value=ev.description||"";
+  buildTypeBtns(ev.type||"CM");
+  document.getElementById("edit-modal").style.display="flex";
 }
 
-// ─── GUIDE MODAL ───────────────────────────────────────────────────────────
-function GuideModal({ onClose }) {
-return (
-<div onClick={onClose} style={{position:“fixed”,inset:0,background:“rgba(44,40,72,0.45)”,zIndex:200,display:“flex”,alignItems:“center”,justifyContent:“center”,padding:16,backdropFilter:“blur(6px)”}}>
-<div onClick={e=>e.stopPropagation()} style={{background:P.white,borderRadius:16,padding:28,maxWidth:480,width:“100%”,boxShadow:“0 20px 60px rgba(107,95,199,0.18)”,border:`1px solid ${P.border}`}}>
-<div style={{fontWeight:700,fontSize:“1rem”,color:P.lavenderD,marginBottom:18}}>📅 Importer dans Google Agenda</div>
-{[“Télécharge le fichier .ics via le bouton ci-dessous.”,
-“Ouvre Google Agenda sur ordinateur : calendar.google.com”,
-“Clique sur ⚙️ Paramètres en haut à droite.”,
-“Dans le menu gauche → "Importer et exporter".”,
-“Clique "Sélectionner un fichier" → choisis ton .ics → "Importer". 🎉”
-].map((t,i)=>(
-<div key={i} style={{display:“flex”,gap:12,marginBottom:13,alignItems:“flex-start”}}>
-<div style={{width:26,height:26,borderRadius:“50%”,background:P.lavenderD,color:“white”,display:“flex”,alignItems:“center”,justifyContent:“center”,fontSize:“0.7rem”,fontWeight:700,flexShrink:0}}>{i+1}</div>
-<div style={{fontSize:“0.82rem”,color:P.textMid,lineHeight:1.6,paddingTop:3}}>{t}</div>
-</div>
-))}
-<div style={{marginTop:14,padding:13,background:”#EAF8F2”,border:`1px solid ${P.mint}`,borderRadius:9,fontSize:“0.78rem”,color:P.mintD,lineHeight:1.6}}>
-💡 <b>Astuce :</b> Tu peux choisir dans quel calendrier importer (perso, études, stages…) lors de l’import.
-</div>
-<button onClick={onClose} style={{marginTop:16,width:“100%”,padding:“10px”,background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:9,color:P.textMid,cursor:“pointer”,fontSize:“0.85rem”}}>Fermer</button>
-</div>
-</div>
-);
+function openAddForWeek(){
+  if(weekModalIdx===null) return;
+  editWeekIdx=weekModalIdx; editEvIdx=-1;
+  document.getElementById("m-title").value="Nouveau créneau";
+  document.getElementById("m-date").value="";
+  document.getElementById("m-start").value="09:00";
+  document.getElementById("m-end").value="10:00";
+  document.getElementById("m-loc").value="";
+  document.getElementById("m-desc").value="";
+  buildTypeBtns("CM");
+  document.getElementById("edit-modal").style.display="flex";
 }
 
-// ─── MAIN APP ──────────────────────────────────────────────────────────────
-function PlanSync() {
-const [step, setStep] = useState(1);
-const [img64, setImg64] = useState(null);
-const [imgMime, setImgMime] = useState(“image/jpeg”);
-const [preview, setPreview] = useState(null);
-const [drag, setDrag] = useState(false);
-const [form, setForm] = useState({startDate:””,period:””,groupNum:””,school:””,extra:””});
-const [savedCtx, setSavedCtx] = useState(null);
-const [loading, setLoading] = useState(false);
-const [lMsg, setLMsg] = useState(LOADER_MSGS[0]);
-const [events, setEvents] = useState([]);
-const [err, setErr] = useState(””);
-const [guide, setGuide] = useState(false);
-const [editIdx, setEditIdx] = useState(null);
-const [addOpen, setAddOpen] = useState(false);
-const fileRef = useRef();
-const tmr = useRef();
-
-useEffect(() => { const s = loadCtx(); if (s) setSavedCtx(s); }, []);
-
-const applySaved = () => {
-if (!savedCtx) return;
-setForm(f=>({…f, groupNum:savedCtx.groupNum||””, school:savedCtx.school||””, period:savedCtx.period||””, extra:savedCtx.extra||””}));
-setSavedCtx(null);
-};
-
-const handleFile = useCallback((file) => {
-if (!file?.type.startsWith(“image/”)) { setErr(“Image uniquement (JPG, PNG, WebP).”); return; }
-setImgMime(file.type);
-const r = new FileReader();
-r.onload = e => { const d=e.target.result; setImg64(d.split(”,”)[1]); setPreview(d); setStep(2); setErr(””); };
-r.readAsDataURL(file);
-}, []);
-
-const analyze = async () => {
-if (!img64) return;
-saveCtx(form);
-setErr(””); setLoading(true); setStep(3);
-let i=0;
-tmr.current = setInterval(()=>{ i=(i+1)%LOADER_MSGS.length; setLMsg(LOADER_MSGS[i]); },2000);
-try {
-const res = await fetch(“https://api.anthropic.com/v1/messages”, {
-method:“POST”, headers:{“Content-Type”:“application/json”},
-body: JSON.stringify({
-model:“claude-sonnet-4-20250514”, max_tokens:4000,
-system: buildPrompt(form),
-messages:[{role:“user”,content:[
-{type:“image”,source:{type:“base64”,media_type:imgMime,data:img64}},
-{type:“text”,text:`Analyse cet emploi du temps en JSON.${form.groupNum?` Groupe: ${form.groupNum}`:""}`}
-]}]
-})
-});
-clearInterval(tmr.current);
-if (!res.ok) { const e=await res.json(); throw new Error(`Erreur API ${res.status}: ${e.error?.message||JSON.stringify(e)}`); }
-const data = await res.json();
-const text = data.content.map(b=>b.text||””).join(””);
-const m = text.match(/{[\s\S]*}/);
-if (!m) throw new Error(“Réponse invalide de l’IA.”);
-const evts = JSON.parse(m[0]).events||[];
-if (!evts.length) throw new Error(“Aucun événement détecté. Essaie avec une image plus nette.”);
-setEvents(evts); setStep(4);
-} catch(e) {
-clearInterval(tmr.current); setErr(e.message||String(e)); setStep(2);
-} finally { setLoading(false); }
-};
-
-const downloadICS = () => {
-const blob = new Blob([generateICS(events)],{type:“text/calendar;charset=utf-8”});
-const a = Object.assign(document.createElement(“a”),{href:URL.createObjectURL(blob),download:“planning-plansync.ics”});
-a.click();
-};
-
-const reset = () => { setStep(1);setImg64(null);setPreview(null);setEvents([]);setErr(””);setLoading(false);setForm(f=>({…f,startDate:””})); };
-
-const STEPS = [“Image”,“Contexte”,“Analyse”,“Export”];
-const iStyle = {width:“100%”,background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:8,padding:“9px 12px”,color:P.textDark,fontFamily:“Arial,sans-serif”,fontSize:“0.82rem”,outline:“none”,boxSizing:“border-box”};
-const blank = {title:“Nouveau créneau”,type:“CM”,date:””,startTime:“09:00”,endTime:“10:00”,location:””,description:””};
-
-return (
-<div style={{minHeight:“100vh”,background:P.bg,padding:“32px 16px 80px”}}>
-<div style={{maxWidth:680,margin:“0 auto”}}>
-
-```
-    {/* Header */}
-    <div style={{marginBottom:28,textAlign:"center"}}>
-      <div style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:14,background:P.white,borderRadius:50,padding:"8px 20px",boxShadow:"0 2px 12px rgba(184,169,240,0.2)",border:`1px solid ${P.border}`}}>
-        <span style={{fontSize:"1.3rem"}}>📅</span>
-        <span style={{fontWeight:800,fontSize:"1.1rem",color:P.lavenderD,letterSpacing:"-0.02em"}}>PlanSync</span>
-      </div>
-      <h1 style={{fontWeight:800,fontSize:"clamp(1.6rem,4vw,2.4rem)",lineHeight:1.15,letterSpacing:"-0.03em",color:P.textDark,marginBottom:10}}>
-        Ton planning,{" "}
-        <span style={{color:P.lavenderD}}>automatiquement</span>
-        {" "}dans Google Agenda
-      </h1>
-      <p style={{color:P.textLight,fontSize:"0.85rem",lineHeight:1.7,maxWidth:480,margin:"0 auto"}}>
-        Prends en photo ton emploi du temps → l'IA extrait tous tes cours, TD et examens → génère un fichier .ics à importer en 1 clic.
-      </p>
-    </div>
-
-    {/* Steps */}
-    <div style={{display:"flex",marginBottom:28,background:P.white,borderRadius:50,padding:"10px 16px",boxShadow:"0 2px 10px rgba(184,169,240,0.15)",border:`1px solid ${P.border}`}}>
-      {STEPS.map((label,i)=>{
-        const n=i+1,done=step>n,active=step===n;
-        return <div key={n} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4,position:"relative"}}>
-          {i<STEPS.length-1 && <div style={{position:"absolute",top:11,left:"58%",width:"84%",height:2,background:done?P.lavenderD:P.border,transition:"background .4s",borderRadius:1}}/>}
-          <div style={{width:22,height:22,borderRadius:"50%",background:done?P.lavenderD:active?P.lavender:P.border,color:done||active?"white":P.textLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.6rem",zIndex:1,fontWeight:700,transition:"all .3s",boxShadow:active?`0 0 0 3px ${P.bg}, 0 0 0 5px ${P.lavender}`:done?`0 0 0 3px ${P.bg}, 0 0 0 5px ${P.lavenderD}`:"none"}}>
-            {done?"✓":n}
-          </div>
-          <span style={{fontSize:"0.56rem",color:active?P.lavenderD:P.textLight,textTransform:"uppercase",letterSpacing:"0.05em",fontWeight:active?700:400}}>{label}</span>
-        </div>;
-      })}
-    </div>
-
-    {/* Upload + Context */}
-    {!loading && step<4 && (
-      <div className="fade-in" style={{background:P.white,borderRadius:16,padding:24,boxShadow:"0 4px 24px rgba(184,169,240,0.12)",border:`1px solid ${P.border}`,marginBottom:16}}>
-        <div style={{fontWeight:700,fontSize:"0.92rem",color:P.textDark,marginBottom:4,display:"flex",alignItems:"center",gap:8}}>
-          📸 Image du planning
-          <span style={{fontSize:"0.62rem",padding:"2px 9px",borderRadius:20,background:P.bg,color:P.lavenderD,border:`1px solid ${P.lavender}`,fontWeight:600}}>ÉTAPE 1</span>
-        </div>
-        <p style={{fontSize:"0.78rem",color:P.textLight,marginBottom:16,lineHeight:1.6}}>Photo ou capture d'écran de ton emploi du temps · JPG, PNG, WebP</p>
-
-        {!preview ? (
-          <div
-            onDragOver={e=>{e.preventDefault();setDrag(true);}}
-            onDragLeave={()=>setDrag(false)}
-            onDrop={e=>{e.preventDefault();setDrag(false);e.dataTransfer.files[0]&&handleFile(e.dataTransfer.files[0]);}}
-            onClick={()=>fileRef.current.click()}
-            style={{border:`2px dashed ${drag?P.lavenderD:P.border}`,borderRadius:12,padding:"40px 20px",textAlign:"center",cursor:"pointer",background:drag?P.bg:P.offwhite,transition:"all .2s"}}>
-            <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>e.target.files[0]&&handleFile(e.target.files[0])}/>
-            <div style={{fontSize:"2.2rem",marginBottom:10}}>🖼️</div>
-            <div style={{fontWeight:700,color:P.textDark,marginBottom:5}}>Clique ou glisse ton image ici</div>
-            <div style={{fontSize:"0.74rem",color:P.textLight}}>JPG · PNG · WebP</div>
-          </div>
-        ) : (
-          <div style={{position:"relative",borderRadius:10,overflow:"hidden",border:`1.5px solid ${P.border}`}}>
-            <img src={preview} alt="planning" style={{width:"100%",maxHeight:220,objectFit:"contain",background:P.offwhite,display:"block"}}/>
-            <button onClick={()=>{setImg64(null);setPreview(null);setStep(1);}} style={{position:"absolute",top:8,right:8,background:"rgba(255,255,255,.9)",border:`1px solid ${P.border}`,color:P.roseD,borderRadius:6,padding:"3px 10px",fontSize:"0.72rem",cursor:"pointer",fontWeight:700}}>✕</button>
-          </div>
-        )}
-
-        {/* Saved context banner */}
-        {savedCtx && preview && (
-          <div style={{marginTop:14,background:"#EAF8F2",border:`1.5px solid ${P.mint}`,borderRadius:10,padding:"11px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
-            <div>
-              <div style={{fontSize:"0.76rem",color:P.mintD,fontWeight:700,marginBottom:2}}>💾 Paramètres sauvegardés détectés</div>
-              <div style={{fontSize:"0.7rem",color:P.textLight}}>{[savedCtx.groupNum&&`Groupe: ${savedCtx.groupNum}`,savedCtx.school].filter(Boolean).join(" · ")}</div>
-            </div>
-            <button onClick={applySaved} style={{background:P.mintD,border:"none",borderRadius:8,padding:"7px 13px",color:"white",fontSize:"0.74rem",fontWeight:700,cursor:"pointer",whiteSpace:"nowrap"}}>Réutiliser →</button>
-          </div>
-        )}
-
-        {/* Context fields */}
-        {preview && (
-          <div style={{marginTop:20}}>
-            <div style={{fontWeight:700,fontSize:"0.84rem",color:P.textDark,marginBottom:12}}>⚙️ Contexte <span style={{fontWeight:400,fontSize:"0.74rem",color:P.textLight}}>(recommandé)</span></div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
-              {[{id:"startDate",label:"Semaine de début",type:"date"},{id:"period",label:"Période",ph:"Ex: S2 2025-2026"},{id:"groupNum",label:"Mon groupe",ph:"Ex: 6/6 ou B3"},{id:"school",label:"Établissement",ph:"Ex: IFSI, AP-HP…"}].map(({id,label,type,ph})=>(
-                <div key={id}>
-                  <div style={{fontSize:"0.63rem",color:P.textLight,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4}}>{label}</div>
-                  <input type={type||"text"} value={form[id]} onChange={e=>setForm(f=>({...f,[id]:e.target.value}))} placeholder={ph||""} style={iStyle}/>
-                </div>
-              ))}
-            </div>
-            <div>
-              <div style={{fontSize:"0.63rem",color:P.textLight,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4}}>Infos supplémentaires</div>
-              <textarea value={form.extra} onChange={e=>setForm(f=>({...f,extra:e.target.value}))} placeholder="Ex: orange = présentiel, vert = distanciel, les partiels sont en rouge…" style={{...iStyle,minHeight:62,resize:"vertical"}}/>
-            </div>
-          </div>
-        )}
-
-        <button onClick={analyze} disabled={!img64}
-          style={{width:"100%",marginTop:18,padding:"14px",background:img64?P.lavenderD:"#E8E4F8",border:"none",borderRadius:10,color:img64?"white":P.textLight,fontWeight:700,fontSize:"0.92rem",cursor:img64?"pointer":"not-allowed",transition:"all .3s",boxShadow:img64?"0 4px 16px rgba(107,95,199,0.3)":"none"}}>
-          ✦ Analyser avec l'IA
-        </button>
-
-        {err && (
-          <div style={{marginTop:12,background:"#FFF0F4",border:`1.5px solid ${P.rose}`,borderRadius:10,padding:"12px 14px",fontSize:"0.78rem",color:P.roseD,lineHeight:1.6}}>
-            ⚠ {err}
-          </div>
-        )}
-      </div>
-    )}
-
-    {/* Loader */}
-    {loading && (
-      <div className="fade-in" style={{background:P.white,borderRadius:16,padding:48,textAlign:"center",boxShadow:"0 4px 24px rgba(184,169,240,0.12)",border:`1px solid ${P.border}`}}>
-        <div style={{width:40,height:40,border:`3px solid ${P.border}`,borderTopColor:P.lavenderD,borderRadius:"50%",margin:"0 auto 20px",animation:"spin .9s linear infinite"}}/>
-        <div style={{fontSize:"0.85rem",color:P.textMid,fontWeight:600}}>Analyse en cours…</div>
-        <div style={{fontSize:"0.78rem",color:P.lavenderD,marginTop:8}}>{lMsg}</div>
-      </div>
-    )}
-
-    {/* Results */}
-    {step===4 && !loading && (
-      <div className="fade-in" style={{background:P.white,borderRadius:16,padding:24,boxShadow:"0 4px 24px rgba(184,169,240,0.12)",border:`1px solid ${P.border}`}}>
-        <div style={{fontWeight:700,fontSize:"0.92rem",color:P.textDark,marginBottom:4,display:"flex",alignItems:"center",gap:8}}>
-          ✅ Événements détectés
-          <span style={{fontSize:"0.62rem",padding:"2px 9px",borderRadius:20,background:"#EAF8F2",color:P.mintD,border:`1px solid ${P.mint}`,fontWeight:600}}>{events.length} événement{events.length>1?"s":""}</span>
-        </div>
-        <p style={{fontSize:"0.74rem",color:P.textLight,marginBottom:16}}>
-          <span style={{color:P.lavenderD,fontWeight:600}}>✏️ modifier</span> · <span style={{color:P.roseD,fontWeight:600}}>✕ supprimer</span> · vérifie avant d'exporter
-        </p>
-
-        {/* Type legend */}
-        <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
-          {Object.entries(TYPE_STYLE).map(([t,s])=>{
-            const count = events.filter(e=>e.type===t).length;
-            if (!count) return null;
-            return <div key={t} style={{display:"flex",alignItems:"center",gap:5,fontSize:"0.74rem",background:s.bg,border:`1px solid ${s.border}`,borderRadius:20,padding:"3px 10px"}}>
-              <span>{s.icon}</span><b style={{color:s.text}}>{count}</b><span style={{color:P.textMid}}>{t}</span>
-            </div>;
-          })}
-        </div>
-
-        {/* Events list */}
-        <div style={{display:"flex",flexDirection:"column",gap:7,maxHeight:380,overflowY:"auto",marginBottom:16,paddingRight:2}}>
-          {events.map((ev,i)=>{
-            const ts = TYPE_STYLE[ev.type]||TYPE_STYLE.CM;
-            const dateStr = ev.date ? new Date(ev.date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}) : "?";
-            const timeStr = ev.startTime&&ev.endTime ? `${ev.startTime}–${ev.endTime}` : ev.startTime||"";
-            return (
-              <div key={i} style={{background:ts.bg,border:`1.5px solid ${ts.border}`,borderRadius:10,padding:"10px 13px",display:"grid",gridTemplateColumns:"auto 1fr auto",alignItems:"center",gap:11,transition:"box-shadow .2s"}}>
-                <span style={{fontSize:"1rem"}}>{ts.icon}</span>
-                <div style={{minWidth:0}}>
-                  <div style={{fontWeight:600,fontSize:"0.83rem",color:P.textDark,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ev.title}</div>
-                  <div style={{fontSize:"0.68rem",color:P.textMid,marginTop:2}}>{dateStr} · {timeStr}{ev.location?` · 📍${ev.location}`:""}</div>
-                  {ev.description && <div style={{fontSize:"0.65rem",color:P.textLight,marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ev.description}</div>}
-                </div>
-                <div style={{display:"flex",gap:5,flexShrink:0}}>
-                  <button onClick={()=>setEditIdx(i)} style={{background:P.white,border:`1.5px solid ${P.lavender}`,color:P.lavenderD,cursor:"pointer",padding:"4px 8px",borderRadius:6,fontSize:"0.75rem",fontWeight:700}}>✏️</button>
-                  <button onClick={()=>setEvents(evs=>evs.filter((_,j)=>j!==i))} style={{background:P.white,border:`1.5px solid ${P.rose}`,color:P.roseD,cursor:"pointer",padding:"4px 8px",borderRadius:6,fontSize:"0.75rem",fontWeight:700}}>✕</button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <button onClick={()=>setAddOpen(true)} style={{width:"100%",marginBottom:14,padding:"9px",background:"transparent",border:`1.5px dashed ${P.border}`,borderRadius:9,color:P.textLight,cursor:"pointer",fontSize:"0.8rem",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
-          + Ajouter un créneau manuellement
-        </button>
-
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-          <button onClick={downloadICS} style={{padding:"13px",background:P.mintD,border:"none",borderRadius:10,color:"white",fontWeight:700,fontSize:"0.85rem",cursor:"pointer",boxShadow:"0 4px 14px rgba(58,140,106,0.3)"}}>⬇ Télécharger .ics</button>
-          <button onClick={()=>setGuide(true)} style={{padding:"13px",background:P.offwhite,border:`1.5px solid ${P.border}`,borderRadius:10,color:P.textMid,fontWeight:700,fontSize:"0.85rem",cursor:"pointer"}}>📖 Guide import</button>
-        </div>
-        <button onClick={reset} style={{marginTop:10,background:"transparent",border:`1px solid ${P.border}`,color:P.textLight,fontSize:"0.74rem",padding:"7px 14px",borderRadius:8,cursor:"pointer",width:"100%"}}>↺ Nouvelle analyse</button>
-      </div>
-    )}
-
-    {/* Footer */}
-    <div style={{marginTop:28,textAlign:"center",fontSize:"0.72rem",color:P.textLight}}>
-      PlanSync · IFSI Pitié-Salpêtrière · Promotion 2025-2028 · <a href="https://kalyT3.github.io/plansync" style="color:#B8A9F0">kalyT3.github.io/plansync</a>
-    </div>
-  </div>
-
-  {editIdx!==null && <EditModal event={events[editIdx]} onSave={ev=>{setEvents(evs=>evs.map((e,i)=>i===editIdx?ev:e));setEditIdx(null);}} onClose={()=>setEditIdx(null)}/>}
-  {addOpen && <EditModal event={blank} onSave={ev=>{setEvents(evs=>[...evs,ev]);setAddOpen(false);}} onClose={()=>setAddOpen(false)}/>}
-  {guide && <GuideModal onClose={()=>setGuide(false)}/>}
-</div>
-```
-
-);
+function buildTypeBtns(selected){
+  const wrap=document.getElementById("type-btns");
+  wrap.innerHTML="";
+  Object.entries(TYPE_STYLE).forEach(([t,s])=>{
+    const active=t===selected;
+    wrap.innerHTML+=`<button class="type-btn" onclick="selectType('${t}')" id="tbtn-${t}"
+      style="background:${active?s.bg:"#FAF8FF"};border:1.5px solid ${active?s.border:"#E0D8F4"};color:${active?s.text:"#9890C0"};font-weight:${active?700:400}">
+      ${s.icon} ${t}</button>`;
+  });
+}
+function selectType(t){buildTypeBtns(t);}
+function getSelectedType(){
+  for(const [t] of Object.entries(TYPE_STYLE)){
+    const btn=document.getElementById("tbtn-"+t);
+    if(btn&&btn.style.fontWeight==="700")return t;
+  }
+  return "CM";
 }
 
-ReactDOM.render(<PlanSync/>, document.getElementById(“root”));
+function saveEdit(){
+  const ev={title:document.getElementById("m-title").value,date:document.getElementById("m-date").value,startTime:document.getElementById("m-start").value,endTime:document.getElementById("m-end").value,location:document.getElementById("m-loc").value,description:document.getElementById("m-desc").value,type:getSelectedType()};
+  if(editEvIdx===-1) queue[editWeekIdx].events.push(ev);
+  else queue[editWeekIdx].events[editEvIdx]=ev;
+  closeEdit();
+  renderWeekModal();
+  showResults();
+}
+function closeEdit(){document.getElementById("edit-modal").style.display="none";}
+function openGuide(){document.getElementById("guide-modal").style.display="flex";}
+function closeGuide(){document.getElementById("guide-modal").style.display="none";}
+function showErr(msg){const b=document.getElementById("err-box");b.textContent="⚠ "+msg;b.style.display="block";}
+function hideErr(){document.getElementById("err-box").style.display="none";}
+
+function resetApp(){
+  queue=[];
+  document.getElementById("img-queue").innerHTML="";
+  document.getElementById("ctx-section").style.display="none";
+  document.getElementById("saved-banner").style.display="none";
+  document.getElementById("results-card").style.display="none";
+  document.getElementById("btn-analyze").disabled=true;
+  document.getElementById("file-in").value="";
+  hideErr();
+  try{const r=localStorage.getItem(STORAGE_KEY);if(r)savedCtx=JSON.parse(r);}catch{}
+}
 </script>
 
 </body>
